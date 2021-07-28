@@ -117,7 +117,7 @@ source /opt/ros/melodic/setup.bash
 #source /home/david/catkin_ws/devel/setup.bash
 source /home/david/Documents/graduation-project-2019-dmatos2012/catkin_ws/devel/setup.bash
 #echo $ROS_PACKAGE_PATH
-source /home/david/.local/bin/virtualenvwrapper.sh
+# source /home/david/.local/bin/virtualenvwrapper.sh
 
 # Install Ruby Gems to ~/gems
 export GEM_HOME="$HOME/gems"
