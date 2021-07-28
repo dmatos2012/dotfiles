@@ -118,7 +118,6 @@ source /opt/ros/melodic/setup.bash
 source /home/david/Documents/graduation-project-2019-dmatos2012/catkin_ws/devel/setup.bash
 #echo $ROS_PACKAGE_PATH
 source /home/david/.local/bin/virtualenvwrapper.sh
-source $HOME/.poetry/env
 
 # Install Ruby Gems to ~/gems
 export GEM_HOME="$HOME/gems"
@@ -141,3 +140,4 @@ if [ -d "$HOME/adb-fastboot/platform-tools" ] ; then
 fi
 
 
+. "$HOME/.cargo/env"

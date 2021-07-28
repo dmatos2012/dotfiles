@@ -47,7 +47,7 @@ let g:airline_theme = 'gruvbox'
 "---------------------------------------- THEME ---------------------------------------------------
 "--------------------------------------------------------------------------------------------------
 
-let g:gruvbox_contrast_dark = 'hard'
+let g:gruvbox_contrast_dark = 'soft'
 if exists('+termguicolors')
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
@@ -74,8 +74,6 @@ let g:fzf_action = {
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit'
   \}
-"ignorar los node_modules de npm al buscar archivos
-let $FZF_DEFAULT_COMMAND = 'ag -g ""'
 
 
 if executable('rg')
@@ -85,6 +83,9 @@ endif
 let loaded_matchparen = 1
 
 let g:vrfr_rg = 'true'
+
+nnoremap <leader>rg :Rg
+nnoremap <silent> <C-g> :GFiles<CR>
 
 
 " Nerd tree
@@ -119,8 +120,8 @@ vnoremap K :m '<-2<CR>gv=gv
 highlight GitGutterAdd guifg=#009900 ctermfg=Green
 highlight GitGutterChange guifg=#bbbb00 ctermfg=Yellow
 highlight GitGutterDelete guifg=#ff2222 ctermfg=Red
-nmap ] <Plug>(GitGutterNextHunk)
-nmap [ <Plug>(GitGutterPrevHunk)
+nmap ) <Plug>(GitGutterNextHunk)
+nmap ( <Plug>(GitGutterPrevHunk)
 let g:gitgutter_enabled = 1
 let g:gitgutter_map_keys= 0
 
@@ -134,7 +135,6 @@ let g:mkdp_markdown_css=fnameescape($HOME).'/.local/lib/github-markdown-css/gith
 
 " Remaps here
 nmap <C-s> <Plug>MarkdownPreview
-
 
 
 
@@ -287,8 +287,8 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+" xmap <leader>f  <Plug>(coc-format-selected)
+" nmap <leader>f  <Plug>(coc-format-selected)
 
 augroup mygroup
   autocmd!
@@ -453,11 +453,6 @@ if has('nvim-0.4.0') || has('patch-8.2.0750')
   vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 endif
 
-" Use CTRL-S for selections ranges.
-" Requires 'textDocument/selectionRange' support of language server.
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
-
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocAction('format')
 
@@ -495,8 +490,8 @@ endif
 
 " Use CTRL-S for selections ranges.
 " Requires 'textDocument/selectionRange' support of language server.
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
+" nmap <silent> <C-s> <Plug>(coc-range-select)
+" xmap <silent> <C-s> <Plug>(coc-range-select)
 
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocAction('format')
