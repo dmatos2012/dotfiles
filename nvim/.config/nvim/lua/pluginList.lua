@@ -66,6 +66,15 @@ return packer.startup(
             end
         }
 
+         use {
+            "nvim-treesitter/nvim-treesitter-textobjects",
+            event = "BufRead",
+            config = function()
+                require "plugins.treesitter-textobjects"
+            end
+        }
+
+
         use {
             "kabouzeid/nvim-lspinstall",
             event = "BufRead"
@@ -258,5 +267,7 @@ return packer.startup(
                 "Git"
             }
         }
+
+       
     end
 )

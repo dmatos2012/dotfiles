@@ -6,7 +6,10 @@ end
 ts_config.setup {
     ensure_installed = {
         "bash",
-        "lua"
+        "lua",
+        "python",
+        "cpp",
+        "yaml"
     },
     highlight = {
         enable = true,
