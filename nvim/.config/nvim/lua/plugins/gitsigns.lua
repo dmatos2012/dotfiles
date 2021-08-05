@@ -5,13 +5,14 @@ end
 
 gitsigns.setup {
     signs = {
-        add = {hl = "DiffAdd", text = "|", numhl = "GitSignsAddNr"},
+        add = {hl = "DiffAdd", text = "|", numhl = "GitSignsAddNr", linehl='GitSignsAddLn'},
         change = {hl = "DiffChange", text = "│", numhl = "GitSignsChangeNr"},
         delete = {hl = "DiffDelete", text = "_", numhl = "GitSignsDeleteNr"},
         topdelete = {hl = "DiffDelete", text = "‾", numhl = "GitSignsDeleteNr"},
         changedelete = {hl = "DiffChange", text = "~", numhl = "GitSignsChangeNr"}
     },
     numhl = false,
+    linehl = false,
     keymaps = {
         -- Default keymap options
         noremap = true,
@@ -28,5 +29,5 @@ gitsigns.setup {
         interval = 100
     },
     sign_priority = 5,
-    status_formatter = nil -- Use default
+    status_formatter = nil, -- Use default
 }

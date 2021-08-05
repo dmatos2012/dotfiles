@@ -61,7 +61,7 @@ cmd "hi clear CursorLine"
 fg("cursorlinenr", white)
 
 -- git signs ---
-fg_bg("DiffAdd", nord_blue, "none")
+fg_bg("DiffAdd", green, "none")
 fg_bg("DiffChange", grey_fg, "none")
 fg_bg("DiffModified", nord_blue, "none")
 

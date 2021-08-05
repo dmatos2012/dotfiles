@@ -70,14 +70,14 @@ return packer.startup(
             "nvim-treesitter/nvim-treesitter-textobjects",
             event = "BufRead",
             config = function()
-                require "plugins.treesitter-textobjects"
+                require "plugins.treesitter"
             end
         }
 
 
         use {
             "kabouzeid/nvim-lspinstall",
-            event = "BufRead"
+            event = "BufEnter"
         }
 
         use {
@@ -90,7 +90,7 @@ return packer.startup(
 
         use {
             "onsails/lspkind-nvim",
-            event = "BufRead",
+            event = "BufEnter",
             config = function()
                 require("plugins.others").lspkind()
             end
@@ -212,11 +212,6 @@ return packer.startup(
             setup = function()
                 require "plugins.dashboard"
             end
-        }
-
-        use {
-            "dstein64/vim-startuptime",
-            cmd = "StartupTime"
         }
 
         -- load autosave only if its globally enabled

@@ -1,6 +1,7 @@
 local opt = vim.opt
 local g = vim.g
 
+opt.undofile = true
 opt.ruler = false
 opt.hidden = true
 opt.ignorecase = true
@@ -14,7 +15,6 @@ opt.cmdheight = 1
 opt.updatetime = 250 -- update interval for gitsigns
 opt.timeoutlen = 400
 opt.clipboard = "unnamedplus"
-vim.cmd [[set undofile]]
 
 -- disable nvim intro
 opt.shortmess:append("sI")
@@ -24,10 +24,10 @@ vim.cmd("let &fcs='eob: '")
 
 -- Numbers
 opt.number = true
-opt.numberwidth = 2
--- opt.relativenumber = true
+opt.numberwidth = 3
+opt.relativenumber = true
 
--- Indenline
+-- Indentline
 opt.expandtab = true
 opt.shiftwidth = 2
 opt.smartindent = true
@@ -67,3 +67,4 @@ end
 
 -- file extension specific tabbing
 -- vim.cmd([[autocmd Filetype python setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4]])
+
