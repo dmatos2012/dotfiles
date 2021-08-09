@@ -68,7 +68,7 @@ return packer.startup(
 
          use {
             "nvim-treesitter/nvim-treesitter-textobjects",
-            event = "BufRead",
+            after = "nvim-treesitter",
             config = function()
                 require "plugins.treesitter"
             end
@@ -257,11 +257,23 @@ return packer.startup(
         }
 
         use {
+
             "tpope/vim-fugitive",
             cmd = {
                 "Git"
             }
         }
+        -- use {
+        --   -- Plugins can have post-install/update hooks
+        --     'iamcco/markdown-preview.nvim', run = 'cd app && yarn install', cmd = 'MarkdownPreview'
+        -- }
+        -- -- loading for a non packer file
+        -- use {
+        --   "iamcco/markdown-preview.nvim",
+        --   ft = "markdown",
+        --   cmd = "MarkdownPreview",
+        --   run = "cd app && yarn install"
+        -- }
 
        
     end

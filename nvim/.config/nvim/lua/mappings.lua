@@ -162,3 +162,6 @@ map("n", "<Leader>gs", ":Git<CR>", opt)
 map("n", "<Leader>gh", ":diffget //2<CR>", opt)
 map("n", "<Leader>gl", ":diffget //3<CR>", opt)
 map("n", "<Leader>gb", ":Git blame<CR>", opt)
+
+-- Run Python within terminal
+map("n","<Leader>p", ":w<CR>:!python %<CR>")
