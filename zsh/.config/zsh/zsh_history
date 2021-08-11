@@ -1,0 +1,146 @@
+ls
+cd ~/.config/
+cd zsh
+nvim ~/.zshrc
+ls
+ls -a
+nvim .zshrc
+cd include
+ls
+nvim aliases.zsh
+ez
+s
+kitty
+diskspace
+cd ..
+diskspace
+h
+cd ~/
+cd ZDOTDIR
+cd $ZDOTDIR
+ls
+cd include
+ls
+nvim al
+nvim aliases.zsh
+echo $MANPAGER
+nvim +Man
+ls
+nvim git.zsh
+ez
+s
+man ls
+man ls | nvim -
+cd ..
+extract Magisk-v21.0.zip
+unzip Magisk-v21.0.zip
+ls
+unzip Magisk-v21.0.zip
+ez
+gs
+ez
+cd include
+ls
+s
+ez
+s
+gs
+nvim
+nvim ~/.zshrc
+ez
+ez
+cd ..
+cd include
+nvim aliases.zsh
+s
+grep
+ls
+weatherreport
+cd ~/.local/bin
+ls
+cd ~/.local/share/bin
+ls
+cd statusbar
+ls
+wea
+weatherreport
+sb-forecat
+sb-forecast
+sb-price
+sb-price
+cd include
+cd $ZDOTDIR
+cd include
+nvim git.zsh
+ez
+cd ..
+ls
+ls
+ls -a
+ez
+s
+ez
+s
+ls 
+ls
+ls 
+ez
+ls
+ls -l
+a
+ls
+cd ~/
+ez
+s
+bash
+exit
+ls
+ls
+ez
+s
+ls
+cd ~/.config/zsh
+ls
+nvim zsh_history
+ls -a
+nvim .zsh_history
+ez
+s
+ez
+bash
+ls
+
+ez
+s
+s
+s
+s
+ez
+s
+s
+ez
+source ~/.config/zsh/.zshrc
+cd ~/
+cd .fzf
+ls
+./uninstall
+cd ..
+cd ~/.fzf
+ls
+cd ..
+fzf
+rm -rf .fzf
+cd ~/.fzf
+fzf
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf\
+~/.fzf/install
+s
+s
+source ~/.config/zsh/.zshrc
+ls
+bash
+ls
+ez
+s
+ls
+exit
