@@ -151,23 +151,26 @@ return packer.startup(
             after = "plenary.nvim"
         }
 
-        use {
+         use {
             "nvim-telescope/telescope.nvim",
             cmd = "Telescope",
+            requires = {
+                {
+                    "nvim-telescope/telescope-fzf-native.nvim",
+                    run = "make"
+                },
+                {
+                    "nvim-telescope/telescope-media-files.nvim"
+                }
+            },
             config = function()
                 require "plugins.telescope"
-            end
-        }
+            end,
+            -- setup = function()
+            --     require "mappings".telescope()
+            -- end
 
-        use {
-            "nvim-telescope/telescope-fzf-native.nvim",
-            run = "make",
-            cmd = "Telescope"
-        }
-        use {
-            "nvim-telescope/telescope-media-files.nvim",
-            cmd = "Telescope"
-        }
+        }        
 
         -- git stuff
         use {
@@ -263,17 +266,33 @@ return packer.startup(
                 "Git"
             }
         }
+        use {
+          'kristijanhusak/orgmode.nvim', config = function()
+                require "plugins.orgmode"
+        end
+        }
+
+
         -- use {
         --   -- Plugins can have post-install/update hooks
         --     'iamcco/markdown-preview.nvim', run = 'cd app && yarn install', cmd = 'MarkdownPreview'
         -- }
         -- -- loading for a non packer file
-        -- use {
-        --   "iamcco/markdown-preview.nvim",
-        --   ft = "markdown",
-        --   cmd = "MarkdownPreview",
-        --   run = "cd app && yarn install"
-        -- }
+        use {
+          "iamcco/markdown-preview.nvim",
+          ft = "markdown",
+          cmd = "MarkdownPreview",
+          run = "cd app && yarn install"
+        }
+
+        use {
+          "folke/todo-comments.nvim",
+          requires = "nvim-lua/plenary.nvim",
+          config = function()
+            require("todo-comments").setup {}
+          end
+        }
+
 
        
     end

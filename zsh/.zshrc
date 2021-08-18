@@ -26,7 +26,6 @@ _comp_options+=(globdots)		# Include hidden files.
 
 # vi mode
 # bindkey -v
-# bindkey '^R' history-incremental-search-backward
 # export KEYTIMEOUT=1
 
 # Use vim keys in tab complete menu:
@@ -34,13 +33,13 @@ bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
-bindkey -v '^?' backward-delete-char
+# bindkey -v '^?' backward-delete-char
 
 
 # antigen theme robbyrussell
 
 
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=6'
+
 
 
 
@@ -51,6 +50,7 @@ if [ -f "$HOME/.asdf/asdf.sh" ]; then
   . $HOME/.asdf/asdf.sh
   . $HOME/.asdf/completions/asdf.bash
 fi
+
 
 #Extra functionality
 sources=(
@@ -64,6 +64,9 @@ done
 
  source $XDG_CONFIG_HOME/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
  source $XDG_CONFIG_HOME/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=6'
+bindkey '^ ' autosuggest-accept
+bindkey '^n' autosuggest-accept
 
 
 # Functions

@@ -1,3 +1,2 @@
-nvim/.config/nvim/plugged/
-nvim/.config/nvim/plugin/
-zsh/.config/zsh/plugins
+/nvim/plugin/
+/zsh/plugins

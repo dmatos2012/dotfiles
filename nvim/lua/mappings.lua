@@ -37,9 +37,6 @@ map("n", "<C-t>t", ":terminal <CR>", opt) -- term buffer
 -- copy whole file content
 map("n", "<C-a>", ":%y+<CR>", opt)
 
--- toggle numbers
-map("n", "<leader>n", ":set nu!<CR>", opt)
-
 -- Truezen.nvim
 map("n", "<leader>zz", ":TZAtaraxis<CR>", opt)
 map("n", "<leader>zm", ":TZMinimalist<CR>", opt)
@@ -147,15 +144,13 @@ map("n", "<S-TAB>", ":BufferLineCyclePrev<CR>", opt)
 -- use ESC to turn off search highlighting
 map("n", "<Esc>", ":noh<CR>", opt)
 
--- get out of terminal with jk
-map("t", "jk", "<C-\\><C-n>", opt)
 
 -- Packer commands till because we are not loading it at startup
-vim.cmd("silent! command PackerCompile lua require 'pluginList' require('packer').compile()")
-vim.cmd("silent! command PackerInstall lua require 'pluginList' require('packer').install()")
-vim.cmd("silent! command PackerStatus lua require 'pluginList' require('packer').status()")
-vim.cmd("silent! command PackerSync lua require 'pluginList' require('packer').sync()")
-vim.cmd("silent! command PackerUpdate lua require 'pluginList' require('packer').update()")
+vim.cmd("silent! command PackerCompile lua require 'plugin-list' require('packer').compile()")
+vim.cmd("silent! command PackerInstall lua require 'plugin-list' require('packer').install()")
+vim.cmd("silent! command PackerStatus lua require 'plugin-list' require('packer').status()")
+vim.cmd("silent! command PackerSync lua require 'plugin-list' require('packer').sync()")
+vim.cmd("silent! command PackerUpdate lua require 'plugin-list' require('packer').update()")
 
 -- Vim Fugitive
 map("n", "<Leader>gs", ":Git<CR>", opt)
@@ -165,3 +160,5 @@ map("n", "<Leader>gb", ":Git blame<CR>", opt)
 
 -- Run Python within terminal
 map("n","<Leader>p", ":w<CR>:!python %<CR>")
+-- Exit terminal with usual Esc
+map("t", "<Esc>", "<C-\\><C-n>", opt)

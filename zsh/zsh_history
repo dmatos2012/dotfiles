@@ -144,3 +144,102 @@ ez
 s
 ls
 exit
+cd $ZDOTDIR
+cd ~/
+cd adb-fastboot
+cd ~/
+ls
+kitty
+s
+gcm
+cd ~/.dotfiles
+ls
+cd zsh
+ls
+cd nvim
+cd ..
+cd nvim
+ls
+ls
+ls -a
+ls
+cd zsh
+cd ..
+cd zsh
+stow zsh
+cd ..
+stow zsh
+stow zsh
+cd `/
+cd ~/
+ls -l | grep plugins
+cd ~/.dotfiles
+cd zsh
+stow zsh
+ls
+stow plugins
+ls
+ls -a
+cd ..
+cd nvim
+ls
+ls -a
+cd ..
+cd zsh
+mkdir .config
+cd .config
+cd ../../
+stow zsh
+stow zsh
+cd ~.
+cd ~/
+cd .config
+cd plugins
+cd 
+ls
+cd ~/.config
+ls -l
+rm -rf plugins
+cd ~/.dotfiles
+stow zsh
+ez
+s
+gs
+git add -A
+git status
+git reset HEAD -- .
+git status
+cd zsh/.config/zsh/plugins
+ls
+cd zsh-autosuggestions
+ls -a
+rm -rf .git
+cd ..
+cd fast-syntax-highlighting
+ls -a
+rm -rf .git
+cd ../../../
+cd ../../
+ls
+git add -A
+git status
+ez
+nvim .gitignore
+git reset HEAD -- .
+git status
+git add -A
+git status
+gs
+gcm "moving stuff around"
+gp
+gpush
+git push origin master
+ls
+diskspa
+diskspace
+cd ~/.dotfiles
+disk
+diskspace
+cd ~/
+exit
+exit

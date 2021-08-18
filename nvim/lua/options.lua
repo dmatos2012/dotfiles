@@ -66,7 +66,9 @@ for _, plugin in pairs(disabled_built_ins) do
 end
 
 -- Don't show status line on vim terminals
-vim.cmd [[ au TermOpen term://* setlocal nonumber laststatus=0 ]]
+-- vim.cmd [[ au TermOpen term://* setlocal nonumber norelativenumber laststatus=0]]
+vim.cmd [[au TermOpen term://* setlocal nonumber norelativenumber laststatus=0]]
+vim.cmd [[ au TermOpen term://* startinsert]]
 
 -- Open a file from its last left off position
 vim.cmd [[ au BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif ]]

@@ -81,6 +81,6 @@ if
     -- Trigger packer compile on PackerComplete, so it properly waits for PackerSync
     vim.cmd 'autocmd User PackerComplete ++once lua print "Waiting for PackerCompile.." require("packer").compile()'
     vim.cmd 'autocmd User PackerCompileDone ++once echo "Packer Compile done, restart neovim."'
-    require "pluginList"
+    require "plugin-list"
     require("packer").update("telescope-fzf-native.nvim", "telescope-media-files.nvim")
 end
