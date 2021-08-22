@@ -9,7 +9,7 @@ Run the image with:
 
 where $NAME_CONTAINER can be given by the user
 
-##TODOs
+## TODOs
 
 - [ ] Bash Install Script for other programs
 
