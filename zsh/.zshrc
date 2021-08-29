@@ -107,5 +107,7 @@ export HISTFILE=$HOME/.config/zsh/zsh_history
 export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
 
+#Go
+export PATH=$PATH:/usr/local/go/bin
 #Rust package manager
 . "$HOME/.cargo/env"

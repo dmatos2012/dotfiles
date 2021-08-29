@@ -8,6 +8,8 @@ end
 
 bufferline.setup {
     options = {
+        -- numbers = "buffer_id",
+        -- number_style = "subscript",
         offsets = {{filetype = "NvimTree", text = "", padding = 1}},
         buffer_close_icon = "",
         modified_icon = "",
@@ -22,7 +24,6 @@ bufferline.setup {
         view = "multiwindow",
         show_buffer_close_icons = true,
         separator_style = "thin",
-        mappings = true,
         always_show_bufferline = true
     },
     highlights = {
