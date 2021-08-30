@@ -162,3 +162,23 @@ map("n", "<Leader>gb", ":Git blame<CR>", opt)
 map("n","<Leader>p", ":w<CR>:!python %<CR>")
 -- Exit terminal with usual Esc
 map("t", "<Esc>", "<C-\\><C-n>", opt)
+
+-- " Move line(s) up and down (cant remap to <M-j> due to st keybinds)
+map("n","<Leader>j", ":m .+1<CR>==")
+map("n","<Leader>k", ":m .-2<CR>==")
+map("i","<Leader>j", "<Esc>:m .+1<CR>==gi")
+map("i","<Leader>k", "<Esc>:m .-2<CR>==gi")
+map("v","<Leader>j", ":m '>+1<CR>gv=gv")
+map("v","<Leader>k", ":m '<-2<CR>gv=gv")
+
+-- --" Easier Moving between splits
+map("n","<C-J>", "<C-W><C-J>")
+map("n","<C-K>", "<C-W><C-K>")
+map("n","<C-L>", "<C-W><C-L>")
+map("n","<C-H>", "<C-W><C-H>")
+
+--Helpful delete/change into blackhole buffer
+map("n", "<Leader>d", '"_d', opt)
+map("n", "<Leader>c", '"_c', opt)
+
+
