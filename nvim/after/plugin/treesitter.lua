@@ -58,7 +58,7 @@ local swap_next, swap_prev = (function()
 end)()
 
 require("nvim-treesitter.configs").setup {
-  ensure_installed = { "go", "toml", "query", "html", "python", "bash" },
+  ensure_installed = { "go", "norg", "toml", "query", "html", "python", "bash" },
 
   highlight = {
     enable = true,

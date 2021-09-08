@@ -1,4 +1,4 @@
-if vim.g.snippets ~= "luasnip" or true then
+if vim.g.snippets ~= "luasnip" then
   return
 end
 
@@ -170,9 +170,9 @@ end
 
 local snippets = {}
 
-snippets.all = {
-  snippet({ trig = "(" }, { t { "(" }, i(1), t { ")" }, i(0) }, neg, char_count_same, "%(", "%)"),
-}
+-- snippets.all = {
+--   snippet({ trig = "(" }, { t { "(" }, i(1), t { ")" }, i(0) }, neg, char_count_same, "%(", "%)"),
+-- }
 
 --stylua: ignore
 snippets.lua = make {
@@ -212,17 +212,61 @@ snippets.go = make {
   },
 
   ef = {
-    i(1, { "val" }), str ", err := ", i(2, { "f" }), str "(", i(3), str ")", i(0),
+    i(1, { "val" }),
+    str ", err := ",
+    i(2, { "f" }),
+    str "(",
+    i(3),
+    str ")",
+    i(0),
   },
 
-  efi = { 
-    i(1, { "val" }), ", ", i(2, { "err" }), " := ", i(3, { "f" }), "(", i(4), ")",
-    t { "", "if ", }, same(2), t {" != nil {", "\treturn ", }, d(5, go_ret_vals, {2, 3}), t { "", "}" },
+  efi = {
+    i(1, { "val" }),
+    ", ",
+    i(2, { "err" }),
+    " := ",
+    i(3, { "f" }),
+    "(",
+    i(4),
+    ")",
+    t { "", "if " },
+    same(2),
+    t { " != nil {", "\treturn " },
+    d(5, go_ret_vals, { 2, 3 }),
+    t { "", "}" },
     i(0),
   },
 
   -- TODO: Fix this up so that it actually uses the tree sitter thing
   ie = { "if err != nil {", "\treturn err", i(0), "}" },
+}
+
+snippets.rust = make {
+  modtest = {
+    t {
+      "#[cfg(test)]",
+      "mod test {",
+      "    use super::*;",
+      "    ",
+    },
+    i(0),
+    t {
+      "",
+      "}",
+    },
+  },
+
+  test = {
+    t {
+      "#[test]",
+      "fn ",
+    },
+    i(1, "testname"),
+    t { "() {", "    " },
+    i(0),
+    t { "", "}" },
+  },
 }
 
 ls.snippets = snippets
