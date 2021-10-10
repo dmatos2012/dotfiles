@@ -84,13 +84,17 @@ return require("packer").startup {
     use { "nvim-telescope/telescope-hop.nvim" }
     -- use("nvim-telescope", "telescope-async-sorter-test.nvim")
 
+    use {
+      "AckslD/nvim-neoclip.lua",
+      config = function()
+        require("neoclip").setup()
+      end,
+    }
+
     use "nvim-telescope/telescope-github.nvim"
     use "nvim-telescope/telescope-symbols.nvim"
 
-    use "tjdevries/sg.nvim"
-
-    -- TODO: When i'm back w/ some npm stuff, get this working.
-    -- elianiva/telescope-npm.nvim
+    -- use "tjdevries/sg.nvim"
 
     use "tjdevries/telescope-hacks.nvim"
 

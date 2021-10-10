@@ -181,7 +181,6 @@ local servers = {
       debounce_text_changes = 200,
     },
   },
-
 }
 
 local setup_server = function(server, config)
@@ -237,10 +236,10 @@ require("nlua.lsp.nvim").setup(lspconfig, {
   },
 })
 
-require("sg.lsp").setup {
-  on_init = custom_init,
-  on_attach = custom_attach,
-}
+-- require("sg.lsp").setup {
+--   on_init = custom_init,
+--   on_attach = custom_attach,
+-- }
 
 --[ An example of using functions...
 -- 0. nil -> do default (could be enabled or disabled)
