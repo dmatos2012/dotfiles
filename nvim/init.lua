@@ -1,4 +1,4 @@
-pcall(require, "impatient")
+-- require "impatient"
 vim.g.mapleader = " "
 vim.g.snippets = "luasnip"
 require "david.globals"

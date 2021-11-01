@@ -134,54 +134,14 @@ updated_capabilities.textDocument.codeLens = { dynamicRegistration = false }
 updated_capabilities = require("cmp_nvim_lsp").update_capabilities(updated_capabilities)
 
 local servers = {
-  pyright = true,
+  pylsp = true,
   bashls = true,
   vimls = true,
   yamlls = true,
 
-  cmake = (1 == vim.fn.executable "cmake-language-server"),
-  dartls = pcall(require, "flutter-tools"),
 
-  clangd = {
-    cmd = {
-      "clangd",
-      "--background-index",
-      "--suggest-missing-includes",
-      "--clang-tidy",
-      "--header-insertion=iwyu",
-    },
-    -- Required for lsp-status
-    init_options = {
-      clangdFileStatus = true,
-    },
-    handlers = nvim_status.extensions.clangd.setup(),
-  },
-
-  gopls = {
-    root_dir = function(fname)
-      local Path = require "plenary.path"
-
-      local absolute_cwd = Path:new(vim.loop.cwd()):absolute()
-      local absolute_fname = Path:new(fname):absolute()
-
-      if string.find(absolute_cwd, "/cmd/", 1, true) and string.find(absolute_fname, absolute_cwd, 1, true) then
-        return absolute_cwd
-      end
-
-      return lspconfig_util.root_pattern("go.mod", ".git")(fname)
-    end,
-
-    settings = {
-      gopls = {
-        codelenses = { test = true },
-      },
-    },
-
-    flags = {
-      debounce_text_changes = 200,
-    },
-  },
 }
+
 
 local setup_server = function(server, config)
   if not config then
