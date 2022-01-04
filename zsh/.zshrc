@@ -10,7 +10,6 @@ PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magent
 # setopt interactive_comments
 # 
 # Set the shell to zsh
-export TERMINAL="st"
 export BROWSER="firefox"
 export EDITOR="nvim"
 
@@ -65,7 +64,6 @@ done
  source $XDG_CONFIG_HOME/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
  source $XDG_CONFIG_HOME/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=6'
-bindkey '^ ' autosuggest-accept
 bindkey '^n' autosuggest-accept
 
 
@@ -111,3 +109,21 @@ export PATH="$HOME/gems/bin:$PATH"
 export PATH=$PATH:/usr/local/go/bin
 #Rust package manager
 . "$HOME/.cargo/env"
+
+#History
+setopt EXTENDED_HISTORY
+setopt HIST_VERIFY
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first when trimming history.
+setopt HIST_IGNORE_DUPS          # Dont record an entry that was just recorded again.
+setopt HIST_IGNORE_ALL_DUPS      # Delete old recorded entry if new entry is a duplicate.
+setopt HIST_FIND_NO_DUPS         # Do not display a line previously found.
+setopt HIST_IGNORE_SPACE         # Dont record an entry starting with a space.
+setopt HIST_SAVE_NO_DUPS         # Dont write duplicate entries in the history file.
+
+setopt inc_append_history
+setopt share_history
+
+bindkey -s '^F' "tmux-sessionizer\n"
+
+# Starship prompt
+eval "$(starship init zsh)"

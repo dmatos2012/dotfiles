@@ -1,16 +1,14 @@
 #!bin/zsh
 alias s='source ~/.config/zsh/.zshrc'
-# {{{1 Edit Aliases
 alias ez='$EDITOR ~/.config/zsh/.zshrc'
 # alias en='$EDITOR ~/Git/config_manager/vim/.nvimrc'
-# }}}
-# {{{1 General Aliases
+# }}}s
 alias ls='ls -F --color=auto --group-directories-first --sort=version'
 alias ll='ls -al'
 alias ldr='ls --color --group-directories-first'
 alias h="history|grep "
 alias grep="grep --color=auto"
-# {{{3 Disk Aliases
+
 # This is GOLD for finding out what is taking so much space on your drives!
 alias diskspace="du -h -S | sort -n -r |more"
 
@@ -23,9 +21,10 @@ alias cdl="cd /home/david/Downloads"
 alias cdoc="cd /home/david/Documents"
 alias cdesk="cd /home/david/Desktop"
 alias cnvim="cd /home/david/.config/nvim"
+alias czsh="cd /home/david/.config/zsh"
 alias cpimg="exec import png:- | xclip -selection c -t image/png"
 alias svimg="scrot -s '%Y-%m-%d_$wx$h.png'"
 alias xo="xdg-open"
-
-
-
+# Tmux
+alias tma='tmux attach -t'
+alias tmn='tmux new -s'

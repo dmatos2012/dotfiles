@@ -134,7 +134,6 @@ updated_capabilities.textDocument.codeLens = { dynamicRegistration = false }
 updated_capabilities = require("cmp_nvim_lsp").update_capabilities(updated_capabilities)
 
 local servers = {
-  pylsp = true,
   bashls = true,
   vimls = true,
   yamlls = true,
@@ -195,6 +194,23 @@ require("nlua.lsp.nvim").setup(lspconfig, {
     "RELOAD",
   },
 })
+
+--Python lsp settings
+require('lspconfig').pylsp.setup{
+  enable = true,
+  settings = {
+    pylsp = {
+      plugins = {
+        mypy = {
+          enabled = true,
+          live_mode = false
+        },
+      }
+    }
+  },
+  on_attach = custom_attach,
+  capabilities = updated_capabilities
+  }
 
 -- require("sg.lsp").setup {
 --   on_init = custom_init,
