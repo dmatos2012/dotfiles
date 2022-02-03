@@ -1,5 +1,3 @@
-local nnoremap = vim.keymap.nnoremap
-
 -- vim.fn["gina#custom#command#option"]('status', '--opener', 'vsplit')
 -- nnoremap { '<leader>gs', '<cmd>Gina status<CR>' }
 
@@ -8,10 +6,18 @@ if not ok then
   return
 end
 
-neogit.setup {}
+local nmap = require("david.keymap").nmap
 
-nnoremap { "<leader>gs", neogit.open }
-nnoremap {
+neogit.setup {
+  integrations = {
+    diffview = true,
+  },
+}
+
+nmap { "<space>vv", ":DiffviewOpen " }
+
+nmap { "<leader>gs", neogit.open }
+nmap {
   "<leader>gc",
   function()
     neogit.open { "commit" }

@@ -7,7 +7,7 @@ if ts_debugging then
   RELOAD "nvim-treesitter"
 end
 
--- local list = require("nvim-treesitter.parsers").get_parser_configs()
+local list = require("nvim-treesitter.parsers").get_parser_configs()
 
 -- list.sql = {
 --   install_info = {
@@ -24,20 +24,6 @@ local custom_captures = {
   ["namespace.type"] = "TSNamespaceType",
 }
 
--- local read_query = function(filename)
---   return table.concat(vim.fn.readfile(vim.fn.expand(filename)), "\n")
--- end
-
--- -- Overrides any existing tree sitter query for a particular name
--- vim.treesitter.set_query("rust", "highlights", read_query "~/.config/nvim/queries/rust/highlights.scm")
--- -- vim.treesitter.set_query("sql", "highlights", read_query "~/.config/nvim/queries/sql/highlights.scm")
-
--- alt+<space>, alt+p -> swap next
--- alt+<backspace>, alt+p -> swap previous
--- swap_previous = {
---   ["<M-s><M-P>"] = "@parameter.inner",
---   ["<M-s><M-F>"] = "@function.outer",
--- },
 local swap_next, swap_prev = (function()
   local swap_objects = {
     p = "@parameter.inner",
@@ -57,8 +43,8 @@ local swap_next, swap_prev = (function()
   return n, p
 end)()
 
-require("nvim-treesitter.configs").setup {
-  ensure_installed = { "go", "norg", "toml", "query", "html", "python", "bash" },
+local _ = require("nvim-treesitter.configs").setup {
+  ensure_installed = { "go", "norg", "toml", "query", "html", "python", "rust", "bash" },
 
   highlight = {
     enable = true,
@@ -171,6 +157,10 @@ require("nvim-treesitter.configs").setup {
     },
   },
 }
+
+local read_query = function(filename)
+  return table.concat(vim.fn.readfile(vim.fn.expand(filename)), "\n")
+end
 
 vim.cmd [[highlight IncludedC guibg=#373b41]]
 

@@ -1,15 +1,41 @@
+-- - External terminal
+-- - make the virt lines thing available if ppl want it
+-- - find the nearest codelens above cursor
+
 local has_dap, dap = pcall(require, "dap")
 if not has_dap then
   return
 end
 
-dap.set_log_level "TRACE"
+require("nvim-dap-virtual-text").setup {
+  enabled = true,
+
+  -- DapVirtualTextEnable, DapVirtualTextDisable, DapVirtualTextToggle, DapVirtualTextForceRefresh
+  enabled_commands = false,
+
+  -- highlight changed values with NvimDapVirtualTextChanged, else always NvimDapVirtualText
+  highlight_changed_variables = true,
+  highlight_new_as_changed = true,
+
+  -- prefix virtual text with comment string
+  commented = false,
+
+  show_stop_reason = true,
+
+  -- experimental features:
+  virt_text_pos = "eol", -- position of virtual text, see `:h nvim_buf_set_extmark()`
+  all_frames = false, -- show virtual text for all stack frames not only current. Only works for debugpy on my machine.
+}
 
 -- TODO: How does terminal work?
 dap.defaults.fallback.external_terminal = {
   command = "/home/tjdevries/.local/bin/kitty",
   args = { "-e" },
 }
+
+dap.adapters.nlua = function(callback, config)
+  callback { type = "server", host = config.host, port = config.port }
+end
 
 dap.configurations.lua = {
   {
@@ -27,25 +53,6 @@ dap.configurations.lua = {
     end,
   },
 }
-
-dap.adapters.nlua = function(callback, config)
-  callback { type = "server", host = config.host, port = config.port }
-end
-
-vim.g.dap_virtual_text = true
-
--- dap.adapters.cpp = {
---   type = 'executable',
---   attach = {
---     pidProperty = "pid",
---     pidSelect = "ask"
---   },
---   command = 'lldb-vscode-11',
---   env = {
---     LLDB_LAUNCH_FLAG_LAUNCH_IN_TTY = "YES"
---   },
---   name = "lldb"
--- }
 
 dap.adapters.c = {
   name = "lldb",
@@ -160,7 +167,7 @@ dap.configurations.c = {
     "remote": true,
     "cwd": "${workspaceRoot}", 
     "gdbpath": "path/to/your/gdb",
-    "auorun": [
+    "autorun": [
             "any gdb commands to initiate your environment, if it is needed"
         ]
 }
@@ -175,40 +182,29 @@ dap.configurations.c = {
     cwd = vim.fn.expand "~/build/neovim",
     gdbpath = vim.fn.exepath "gdb",
   },
+  -- {
+  --   name = "Launch rust-analyzer lsif",
+  --   type = "lldb",
+  --   request = "launch",
+  --   program = "/home/tjdevries/sourcegraph/rust-analyzer.git/monikers-1/target/debug/rust-analyzer",
+  --   args = { "lsif", "/home/tjdevries/build/rmpv/" },
+  --   cwd = "/home/tjdevries/sourcegraph/rust-analyzer.git/monikers-1/",
+  --   stopOnEntry = false,
+  --   runInTerminal = false,
+  -- },
+  {
+    name = "Launch ./build/bin/nvim",
+    type = "lldb",
+    request = "launch",
+    program = "/home/tjdevries/build/neovim.git/lua_autocmd/build/bin/nvim",
+    args = { "--headless" },
+    cwd = "/home/tjdevries/build/neovim.git/lua_autocmd/",
+    stopOnEntry = false,
+    runInTerminal = false,
+  },
 }
 
 --  https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation#go-using-delve-directly
-dap.adapters.python = {
-  type = "executable",
-  command = "/home/david/debugpy/bin/python",
-  args = { "-m", "debugpy.adapter" },
-}
-
-dap.configurations.python = {
-  {
-    -- The first three options are required by nvim-dap
-    type = "python", -- the type here established the link to the adapter definition: `dap.adapters.python`
-    request = "launch",
-    name = "watup py",
-
-    -- Options below are for debugpy, see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings for supported options
-
-    program = "${file}", -- This configuration will launch the current file if used.
-    pythonPath = function()
-      -- debugpy supports launching an application with a different interpreter then the one used to launch debugpy itself.
-      -- The code below looks for a `venv` or `.venv` folder in the current directly and uses the python within.
-      -- You could adapt this - to for example use the `VIRTUAL_ENV` environment variable.
-      local cwd = vim.fn.getcwd()
-      if vim.fn.executable(cwd .. "/venv/bin/python") == 1 then
-        return cwd .. "/venv/bin/python"
-      elseif vim.fn.executable(cwd .. "/.venv/bin/python") == 1 then
-        return cwd .. "/.venv/bin/python"
-      else
-        return "/usr/bin/python3"
-      end
-    end,
-  },
-}
 dap.adapters.go = function(callback, _)
   local stdout = vim.loop.new_pipe(false)
   local handle, pid_or_err
@@ -307,41 +303,200 @@ dap.configurations.go = {
     },
     dlvToolPath = vim.fn.exepath "dlv",
   },
+  {
+    type = "go",
+    name = "Run lsif-go-imports in sourcegraph",
+    request = "launch",
+    showLog = true,
+    program = "./cmd/lsif-go",
+    args = {
+      "--project-root=/home/tjdevries/sourcegraph/sourcegraph.git/main",
+      "--repository-root=/home/tjdevries/sourcegraph/sourcegraph.git/main",
+      "--module-root=/home/tjdevries/sourcegraph/sourcegraph.git/main",
+      "--no-animation",
+    },
+    dlvToolPath = vim.fn.exepath "dlv",
+  },
 }
 
--- dap.configurations.python = {
---   {
---     type = "python",
---     request = "launch",
---     name = "Build api",
---     program = "${file}",
---     args = { "--target", "api" },
---     console = "integratedTerminal",
---   },
---   {
---     type = "python",
---     request = "launch",
---     name = "lsif",
---     program = "src/lsif/__main__.py",
---     args = {},
---     console = "integratedTerminal",
---   },
+dap.configurations.python = {
+  {
+    type = "python",
+    request = "launch",
+    name = "Build api",
+    program = "${file}",
+    args = { "--target", "api" },
+    console = "integratedTerminal",
+  },
+  {
+    type = "python",
+    request = "launch",
+    name = "lsif",
+    program = "src/lsif/__main__.py",
+    args = {},
+    console = "integratedTerminal",
+  },
+}
+
+local dap_python = require "dap-python"
+dap_python.setup("python", {
+  include_configs = true,
+})
+
+dap_python.test_runner = "pytest"
+
+dap.adapters.lldb = {
+  type = "executable",
+  command = "/usr/bin/lldb-vscode-11",
+  name = "lldb",
+}
+
+local extension_path = vim.fn.expand "~/.vscode/extensions/vadimcn.vscode-lldb-1.6.10/"
+local codelldb_path = extension_path .. "adapter/codelldb"
+local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
+
+-- dap.adapters.rt_lldb = {
+--   type = "executable",
+--   command = codelldb_path,
+--   name = "rt_lldb",
 -- }
 
--- require("dap-python").setup("python", {
---   include_configs = true,
--- })
+dap.adapters.rt_lldb = function(callback, _)
+  local stdout = vim.loop.new_pipe(false)
+  local stderr = vim.loop.new_pipe(false)
+  local handle
+  local pid_or_err
+  local port
+  local error_message = ""
 
-vim.cmd [[nnoremap <silent> <F5> :lua require'dap'.continue()<CR>]]
-vim.cmd [[nnoremap <silent> <F1> :lua require'dap'.step_into()<CR>]]
-vim.cmd [[nnoremap <silent> <F10> :lua require'dap'.step_over()<CR>]]
+  local opts = {
+    stdio = { nil, stdout, stderr },
+    args = { "--liblldb", liblldb_path },
+    detached = true,
+  }
 
-vim.cmd [[nnoremap <silent> <leader>db :lua require'dap'.toggle_breakpoint()<CR>]]
-vim.cmd [[nnoremap <silent> <leader>dB :lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>]]
-vim.cmd [[nnoremap <silent> <leader>dr :lua require'dap'.repl.open()<CR>]]
+  handle, pid_or_err = vim.loop.spawn(codelldb_path, opts, function(code)
+    stdout:close()
+    stderr:close()
+    handle:close()
+    if code ~= 0 then
+      print("codelldb exited with code", code)
+      print("error message", error_message)
+    end
+  end)
 
-vim.cmd [[nnoremap <silent> <space>dh :lua require('dap.ui.variables').hover()<CR>]]
+  assert(handle, "Error running codelldb: " .. tostring(pid_or_err))
 
+  stdout:read_start(function(err, chunk)
+    assert(not err, err)
+    if chunk then
+      if not port then
+        local chunks = {}
+        for substring in chunk:gmatch "%S+" do
+          table.insert(chunks, substring)
+        end
+        port = tonumber(chunks[#chunks])
+        vim.schedule(function()
+          callback {
+            type = "server",
+            host = "127.0.0.1",
+            port = port,
+          }
+        end)
+      else
+        vim.schedule(function()
+          require("dap.repl").append(chunk)
+        end)
+      end
+    end
+  end)
+  stderr:read_start(function(_, chunk)
+    if chunk then
+      error_message = error_message .. chunk
+
+      vim.schedule(function()
+        require("dap.repl").append(chunk)
+      end)
+    end
+  end)
+end
+
+dap.configurations.rust = {
+  {
+    name = "Launch",
+    type = "lldb",
+    request = "launch",
+    program = function()
+      return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+    end,
+    cwd = "${workspaceFolder}",
+    stopOnEntry = false,
+    args = {},
+
+    -- if you change `runInTerminal` to true, you might need to change the yama/ptrace_scope setting:
+    --
+    --    echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+    --
+    -- Otherwise you might get the following error:
+    --
+    --    Error on launch: Failed to attach to the target process
+    --
+    -- But you should be aware of the implications:
+    -- https://www.kernel.org/doc/html/latest/admin-guide/LSM/Yama.html
+    runInTerminal = false,
+  },
+  {
+    name = "Launch rust-analyzer lsif",
+    type = "lldb",
+    request = "launch",
+    program = "/home/tjdevries/sourcegraph/rust-analyzer.git/monikers-1/target/debug/rust-analyzer",
+    args = { "lsif", "/home/tjdevries/build/rmpv/" },
+    cwd = "/home/tjdevries/sourcegraph/rust-analyzer.git/monikers-1/",
+    stopOnEntry = false,
+    runInTerminal = false,
+  },
+}
+
+local map = function(lhs, rhs, desc)
+  if desc then
+    desc = "[DAP] " .. desc
+  end
+
+  vim.keymap.set("n", lhs, rhs, { silent = true, desc = desc })
+end
+
+map("<leader><F5>", function()
+  if vim.bo.filetype ~= "rust" then
+    vim.notify "This wasn't rust. I don't know what to do"
+    return
+  end
+
+  R("tj.dap").select_rust_runnable()
+end)
+
+map("<F1>", require("dap").step_back, "step_back")
+map("<F2>", require("dap").step_into, "step_into")
+map("<F3>", require("dap").step_over, "step_over")
+map("<F4>", require("dap").step_out, "step_out")
+map("<F5>", require("dap").continue, "continue")
+
+-- TODO:
+-- disconnect vs. terminate
+
+map("<leader>dr", require("dap").repl.open)
+
+map("<leader>db", require("dap").toggle_breakpoint)
+map("<leader>dB", function()
+  require("dap").set_breakpoint(vim.fn.input "[DAP] Condition > ")
+end)
+
+map("<leader>de", require("dapui").eval)
+map("<leader>dE", function()
+  require("dapui").eval(vim.fn.input "[DAP] Expression > ")
+end)
+
+-- You can set trigger characters OR it will default to '.'
+-- You can also trigger with the omnifunc, <c-x><c-o>
 vim.cmd [[
 augroup DapRepl
   au!
@@ -373,11 +528,46 @@ local _ = dap_ui.setup {
   },
 }
 
+local original = {}
+local debug_map = function(lhs, rhs, desc)
+  local keymaps = vim.api.nvim_get_keymap "n"
+  original[lhs] = vim.tbl_filter(function(v)
+    return v.lhs == lhs
+  end, keymaps)[1] or true
+
+  vim.keymap.set("n", lhs, rhs, { desc = desc })
+end
+
+local debug_unmap = function()
+  for k, v in pairs(original) do
+    if v == true then
+      vim.keymap.del("n", k)
+    else
+      local rhs = v.rhs
+
+      v.lhs = nil
+      v.rhs = nil
+      v.buffer = nil
+      v.mode = nil
+      v.sid = nil
+      v.lnum = nil
+
+      vim.keymap.set("n", k, rhs, v)
+    end
+  end
+
+  original = {}
+end
+
 dap.listeners.after.event_initialized["dapui_config"] = function()
+  debug_map("asdf", ":echo 'hello world<CR>", "showing things")
+
   dap_ui.open()
 end
 
 dap.listeners.before.event_terminated["dapui_config"] = function()
+  debug_unmap()
+
   dap_ui.close()
 end
 

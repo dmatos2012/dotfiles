@@ -10,7 +10,7 @@ return require("packer").startup {
     use "tjdevries/gruvbuddy.nvim"
     use "tjdevries/nlua.nvim"
     use "tjdevries/express_line.nvim"
-    use "tjdevries/astronauta.nvim"
+    use "tjdevries/green_light.nvim"
 
     use "norcalli/nvim-colorizer.lua"
     use {
@@ -66,6 +66,13 @@ return require("packer").startup {
 
     use "neovim/nvim-lspconfig"
     use "wbthomason/lsp-status.nvim"
+    use "j-hui/fidget.nvim"
+    use {
+      "ericpubu/lsp_codelens_extensions.nvim",
+      config = function()
+        require("codelens_extensions").setup()
+      end,
+    }
     use "tjdevries/lsp_extensions.nvim"
 
     use "onsails/lspkind-nvim"
@@ -77,12 +84,26 @@ return require("packer").startup {
     })
 
     use "nvim-telescope/telescope.nvim"
+    use "nvim-telescope/telescope-rs.nvim"
     use "nvim-telescope/telescope-fzf-writer.nvim"
     use "nvim-telescope/telescope-packer.nvim"
     use "nvim-telescope/telescope-fzy-native.nvim"
+    use "nvim-telescope/telescope-github.nvim"
+    use "nvim-telescope/telescope-symbols.nvim"
+
     use { "nvim-telescope/telescope-fzf-native.nvim", run = "make" }
     use { "nvim-telescope/telescope-hop.nvim" }
+    use { "nvim-telescope/telescope-file-browser.nvim" }
+    use { "nvim-telescope/telescope-ui-select.nvim" }
+    use { "nvim-telescope/telescope-smart-history.nvim" }
+    use { "tami5/sqlite.lua" }
+
+    use { "nvim-telescope/telescope-frecency.nvim" }
+    use { "nvim-telescope/telescope-cheat.nvim" }
+    use { "nvim-telescope/telescope-arecibo.nvim", rocks = { "openssl", "lua-http-parser" } }
     -- use("nvim-telescope", "telescope-async-sorter-test.nvim")
+
+    
 
     use {
       "AckslD/nvim-neoclip.lua",
@@ -91,8 +112,6 @@ return require("packer").startup {
       end,
     }
 
-    use "nvim-telescope/telescope-github.nvim"
-    use "nvim-telescope/telescope-symbols.nvim"
 
     -- use "tjdevries/sg.nvim"
 
@@ -111,6 +130,12 @@ return require("packer").startup {
         "Verbose", -- view verbose output in preview window.
         "Time", -- measure how long it takes to run some stuff.
       },
+    }
+
+    -- For narrowing regions of text to look at them alone
+    use {
+      "chrisbra/NrrwRgn",
+      cmd = { "NarrowRegion", "NarrowWindow" },
     }
     use "kyazdani42/nvim-web-devicons"
     -- use "kyazdani42/nvim-tree.lua"
@@ -143,7 +168,9 @@ return require("packer").startup {
     use "hrsh7th/cmp-path"
     use "hrsh7th/cmp-nvim-lua"
     use "hrsh7th/cmp-nvim-lsp"
+    use "hrsh7th/cmp-nvim-lsp-document-symbol"
     use "saadparwaiz1/cmp_luasnip"
+    use "tamago324/cmp-zsh"
     -- Find and replace
     use "windwp/nvim-spectre"
 
@@ -189,10 +216,26 @@ return require("packer").startup {
     }
 
     use "tpope/vim-surround" -- Surround text objects easily
+
     -- Async signs!
     use "lewis6991/gitsigns.nvim"
+    -- Git worktree utility
+    use {
+      "ThePrimeagen/git-worktree.nvim",
+      config = function()
+        require("git-worktree").setup {}
+      end,
+    }
     use { "junegunn/fzf", run = "./install --all" }
     use { "junegunn/fzf.vim" }
     use { "Vhyrro/neorg", branch = "unstable" }
   end,
+  config = {
+    luarocks = {
+      python_cmd = "python3",
+    },
+    display = {
+      -- open_fn = require('packer.util').float,
+    },
+  },
 }
