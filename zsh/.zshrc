@@ -127,3 +127,6 @@ bindkey -s '^F' "tmux-sessionizer\n"
 
 # Starship prompt
 eval "$(starship init zsh)"
+
+# Allow installation of packages only inside virtualenv
+export PIP_REQUIRE_VIRTUALENV=1

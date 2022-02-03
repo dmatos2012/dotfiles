@@ -175,3 +175,29 @@ function! david#jump_direction(letter)
 
   call execute(printf('normal! %d%s', jump_count, a:letter))
 endfunction
+
+" Does:
+" Toggle zoom on current Window
+"https://github.com/bew/dotfiles/blob/main/nvim/mappings.vim
+function! david#zoom_toggle()
+  if 1 == winnr('$')
+    " There is only one window
+    echo "No need to zoom!"
+    return
+  endif
+
+  if exists('t:zoom_restore')
+    " Restore tab layout
+    let status = "restored"
+    exe t:zoom_restore
+    unlet t:zoom_restore
+  else
+    " Save tab layout & zoom window
+    let status = "saved and window zoomed"
+    let t:zoom_restore = winrestcmd()
+    wincmd |
+    wincmd _
+  endif
+
+  echo "Tab layout: " . status
+endfunction

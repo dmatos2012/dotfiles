@@ -98,6 +98,9 @@ inoremap <M-k> <Esc>:m .-2<CR>==gi
 vnoremap <M-j> :m '>+1<CR>gv=gv
 vnoremap <M-k> :m '<-2<CR>gv=gv
 
+" Toggle zoom on current window
+nnoremap <silent> +  :call david#zoom_toggle()<CR>
+
 " Fat finger with Q all the time
 command! Wq wq
 command! W w
