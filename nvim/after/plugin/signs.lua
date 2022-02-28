@@ -44,7 +44,7 @@ signs.setup {
     -- ['n <leader>hu'] = '<cmd>lua require"gitsigns".undo_stage_hunk()<CR>',
     -- ['n <leader>hr'] = '<cmd>lua require"gitsigns".reset_hunk()<CR>',
     -- ['n <leader>hp'] = '<cmd>lua require"gitsigns".preview_hunk()<CR>',
-    -- ['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line()<CR>',
+    ['n <leader>hb'] = '<cmd>lua require"gitsigns".blame_line()<CR>',
   },
 
   current_line_blame_opts = {

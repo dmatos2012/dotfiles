@@ -161,7 +161,11 @@ return require("packer").startup {
       after = "goyo.vim",
       disable = use_folke,
     }
-    use { "iamcco/markdown-preview.nvim", ft = "markdown", run = "cd app && yarn install" }
+
+    use {'iam}cco/markdown-preview.nvim', run = 'cd app && yarn install',
+      cmd= 'MarkdownPreview', ft='markdown'
+      }
+
     -- Completion
     use "hrsh7th/nvim-cmp"
     use "hrsh7th/cmp-buffer"

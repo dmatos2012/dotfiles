@@ -328,18 +328,10 @@ dap.configurations.python = {
     args = { "--target", "api" },
     console = "integratedTerminal",
   },
-  {
-    type = "python",
-    request = "launch",
-    name = "lsif",
-    program = "src/lsif/__main__.py",
-    args = {},
-    console = "integratedTerminal",
-  },
 }
 
 local dap_python = require "dap-python"
-dap_python.setup("python", {
+dap_python.setup("~/.venvs/debugpy/bin/python", {
   include_configs = true,
 })
 
@@ -479,6 +471,7 @@ map("<F2>", require("dap").step_into, "step_into")
 map("<F3>", require("dap").step_over, "step_over")
 map("<F4>", require("dap").step_out, "step_out")
 map("<F5>", require("dap").continue, "continue")
+map("<leader>dt", require("dap-python").test_method, "test-method")
 
 -- TODO:
 -- disconnect vs. terminate
