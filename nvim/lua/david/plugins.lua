@@ -162,7 +162,7 @@ return require("packer").startup {
       disable = use_folke,
     }
 
-    use {'iam}cco/markdown-preview.nvim', run = 'cd app && yarn install',
+    use {'iamcco/markdown-preview.nvim', run = 'cd app && yarn install',
       cmd= 'MarkdownPreview', ft='markdown'
       }
 
