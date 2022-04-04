@@ -24,8 +24,8 @@ compinit
 _comp_options+=(globdots)		# Include hidden files.
 
 # vi mode
-# bindkey -v
-# export KEYTIMEOUT=1
+bindkey -v
+export KEYTIMEOUT=1
 
 # Use vim keys in tab complete menu:
 bindkey -M menuselect 'h' vi-backward-char
@@ -130,3 +130,10 @@ eval "$(starship init zsh)"
 
 # Allow installation of packages only inside virtualenv
 export PIP_REQUIRE_VIRTUALENV=1
+
+if [ -f "$HOME/.pythonrc.py" ]; then
+    export PYTHONSTARTUP=$HOME/.pythonrc.py
+fi
+
+
+alias luamake=/home/david/build/lua-language-server/3rd/luamake/luamake

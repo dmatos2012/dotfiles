@@ -1,5 +1,5 @@
-local inoremap = vim.keymap.inoremap
-local nnoremap = vim.keymap.nnoremap
+local imap = require("david.keymap").imap
+local nmap = require("david.keymap").nmap
 
 local has_lsp, lspconfig = pcall(require, "lspconfig")
 if not has_lsp then
@@ -14,13 +14,10 @@ local telescope_mapper = require "david.telescope.mappings"
 local handlers = require "david.lsp.handlers"
 
 -- Can set this lower if needed.
--- require("vim.lsp.log").set_level "debug"
--- require('vim.lsp.log').set_level("trace")
+require("vim.lsp.log").set_level "debug"
+-- require("vim.lsp.log").set_level "trace"
 
-local lspkind = require "lspkind"
 local status = require "david.lsp.status"
-
-lspkind.init()
 status.activate()
 
 local custom_init = function(client)
@@ -51,7 +48,7 @@ local filetype_attach = setmetatable({
     vim.cmd [[
       augroup lsp_buf_format
         au! BufWritePre <buffer>
-        autocmd BufWritePre <buffer> :lua vim.lsp.buf.formatting(nil, 5000)
+        autocmd BufWritePre <buffer> :lua vim.lsp.buf.formatting_sync()
       augroup END
     ]]
   end,
@@ -62,13 +59,21 @@ local filetype_attach = setmetatable({
 })
 
 local buf_nnoremap = function(opts)
-  opts.buffer = 0
-  nnoremap(opts)
+  if opts[3] == nil then
+    opts[3] = {}
+  end
+  opts[3].buffer = 0
+
+  nmap(opts)
 end
 
 local buf_inoremap = function(opts)
-  opts.buffer = 0
-  inoremap(opts)
+  if opts[3] == nil then
+    opts[3] = {}
+  end
+  opts[3].buffer = 0
+
+  imap(opts)
 end
 
 local custom_attach = function(client)
@@ -77,10 +82,6 @@ local custom_attach = function(client)
   nvim_status.on_attach(client)
 
   buf_inoremap { "<c-s>", vim.lsp.buf.signature_help }
-
-  buf_nnoremap { "<space>dn", vim.lsp.diagnostic.goto_next }
-  buf_nnoremap { "<space>dp", vim.lsp.diagnostic.goto_prev }
-  buf_nnoremap { "<space>sl", vim.lsp.diagnostic.show_line_diagnostics }
 
   buf_nnoremap { "<space>cr", vim.lsp.buf.rename }
   telescope_mapper("<space>ca", "lsp_code_actions", nil, true)
@@ -99,7 +100,7 @@ local custom_attach = function(client)
   telescope_mapper("<space>ww", "lsp_dynamic_workspace_symbols", { ignore_filename = true }, true)
 
   if filetype ~= "lua" then
-    buf_nnoremap { "K", vim.lsp.buf.hover }
+    buf_nnoremap { "K", vim.lsp.buf.hover, { desc = "lsp:hover" } }
   end
 
   vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
@@ -119,7 +120,8 @@ local custom_attach = function(client)
     vim.cmd [[
       augroup lsp_document_codelens
         au! * <buffer>
-        autocmd BufWritePost,CursorHold <buffer> lua vim.lsp.codelens.refresh()
+        autocmd BufEnter ++once         <buffer> lua require"vim.lsp.codelens".refresh()
+        autocmd BufWritePost,CursorHold <buffer> lua require"vim.lsp.codelens".refresh()
       augroup END
     ]]
   end
@@ -133,14 +135,82 @@ updated_capabilities = vim.tbl_deep_extend("keep", updated_capabilities, nvim_st
 updated_capabilities.textDocument.codeLens = { dynamicRegistration = false }
 updated_capabilities = require("cmp_nvim_lsp").update_capabilities(updated_capabilities)
 
+-- TODO: check if this is the problem.
+updated_capabilities.textDocument.completion.completionItem.insertReplaceSupport = false
+
+-- vim.lsp.buf_request(0, "textDocument/codeLens", { textDocument = vim.lsp.util.make_text_document_params() })
+
 local servers = {
+  pylsp = true,
   bashls = true,
   vimls = true,
   yamlls = true,
 
+  cmake = (1 == vim.fn.executable "cmake-language-server"),
+  dartls = pcall(require, "flutter-tools"),
 
+  clangd = {
+    cmd = {
+      "clangd",
+      "--background-index",
+      "--suggest-missing-includes",
+      "--clang-tidy",
+      "--header-insertion=iwyu",
+    },
+    -- Required for lsp-status
+    init_options = {
+      clangdFileStatus = true,
+    },
+    handlers = nvim_status.extensions.clangd.setup(),
+  },
+
+  gopls = {
+    root_dir = function(fname)
+      local Path = require "plenary.path"
+
+      local absolute_cwd = Path:new(vim.loop.cwd()):absolute()
+      local absolute_fname = Path:new(fname):absolute()
+
+      if string.find(absolute_cwd, "/cmd/", 1, true) and string.find(absolute_fname, absolute_cwd, 1, true) then
+        return absolute_cwd
+      end
+
+      return lspconfig_util.root_pattern("go.mod", ".git")(fname)
+    end,
+
+    settings = {
+      gopls = {
+        codelenses = { test = true },
+      },
+    },
+
+    flags = {
+      debounce_text_changes = 200,
+    },
+  },
+
+  omnisharp = {
+    cmd = { vim.fn.expand "~/build/omnisharp/run", "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
+  },
+
+  rust_analyzer = true,
+  --   settings = {
+  --     ["rust-analyzer"] = {
+  --     },
+  -- },
+
+  tsserver = {
+    cmd = { "typescript-language-server", "--stdio" },
+    filetypes = {
+      "javascript",
+      "javascriptreact",
+      "javascript.jsx",
+      "typescript",
+      "typescriptreact",
+      "typescript.tsx",
+    },
+  },
 }
-
 
 local setup_server = function(server, config)
   if not config then
@@ -156,7 +226,7 @@ local setup_server = function(server, config)
     on_attach = custom_attach,
     capabilities = updated_capabilities,
     flags = {
-      debounce_text_changes = 50,
+      debounce_text_changes = nil,
     },
   }, config)
 
@@ -168,7 +238,7 @@ for server, config in pairs(servers) do
 end
 
 -- Load lua configuration from nlua.
-require("nlua.lsp.nvim").setup(lspconfig, {
+_ = require("nlua.lsp.nvim").setup(lspconfig, {
   on_init = custom_init,
   on_attach = custom_attach,
   capabilities = updated_capabilities,
@@ -194,23 +264,6 @@ require("nlua.lsp.nvim").setup(lspconfig, {
     "RELOAD",
   },
 })
-
---Python lsp settings
-require('lspconfig').pylsp.setup{
-  enable = true,
-  settings = {
-    pylsp = {
-      plugins = {
-        mypy = {
-          enabled = true,
-          live_mode = false
-        },
-      }
-    }
-  },
-  on_attach = custom_attach,
-  capabilities = updated_capabilities
-  }
 
 -- require("sg.lsp").setup {
 --   on_init = custom_init,

@@ -1,5 +1,6 @@
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
+local action_layout = require "telescope.actions.layout"
 
 local set_prompt_to_entry_value = function(prompt_bufnr)
   local entry = action_state.get_selected_entry()
@@ -12,9 +13,10 @@ end
 
 require("telescope").setup {
   defaults = {
-    -- prompt_prefix = "❯ ",
-    -- selection_caret = "❯ ",
-    prompt_prefix = "> ",
+    prompt_prefix = "❯ ",
+    selection_caret = "❯ ",
+    entry_prefix = " ",
+    multi_icon = "<>",
 
     winblend = 0,
 
@@ -26,8 +28,6 @@ require("telescope").setup {
       prompt_position = "top",
 
       horizontal = {
-        -- width_padding = 0.1,
-        -- height_padding = 0.1,
         preview_width = function(_, cols, _)
           if cols > 200 then
             return math.floor(cols * 0.4)
@@ -38,8 +38,6 @@ require("telescope").setup {
       },
 
       vertical = {
-        -- width_padding = 0.05,
-        -- height_padding = 1,
         width = 0.9,
         height = 0.95,
         preview_height = 0.5,
@@ -63,37 +61,73 @@ require("telescope").setup {
         ["<C-s>"] = actions.select_horizontal,
         ["<C-n>"] = "move_selection_next",
 
-        ["<C-y>"] = set_prompt_to_entry_value,
+        ["<C-e>"] = actions.results_scrolling_down,
+        ["<C-y>"] = actions.results_scrolling_up,
+        -- ["<C-y>"] = set_prompt_to_entry_value,
+
+        -- These are new :)
+        ["<M-p>"] = action_layout.toggle_preview,
+        ["<M-m>"] = action_layout.toggle_mirror,
+        -- ["<M-p>"] = action_layout.toggle_prompt_position,
 
         -- ["<M-m>"] = actions.master_stack,
-
-        -- Experimental
-        -- ["<tab>"] = actions.toggle_selection,
 
         -- ["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
         -- ["<M-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
 
-        ["<C-space>"] = function(prompt_bufnr)
+        -- This is nicer when used with smart-history plugin.
+        ["<C-k>"] = actions.cycle_history_next,
+        ["<C-j>"] = actions.cycle_history_prev,
+        ["<c-g>s"] = actions.select_all,
+        ["<c-g>a"] = actions.add_selection,
+
+        ["<c-space>"] = function(prompt_bufnr)
           local opts = {
             callback = actions.toggle_selection,
             loop_callback = actions.send_selected_to_qflist,
           }
           require("telescope").extensions.hop._hop_loop(prompt_bufnr, opts)
         end,
+
+        ["<C-w>"] = function()
+          vim.api.nvim_input "<c-s-w>"
+        end,
+      },
+      n = {
+        ["<C-e>"] = actions.results_scrolling_down,
+        ["<C-y>"] = actions.results_scrolling_up,
       },
     },
 
-    borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
-
-    -- file_sorter = sorters.get_fzy_sorter,
-    file_ignore_patterns = {
-      -- "parser.c",
-      -- "mock_.*.go",
-    },
+    -- borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+    -- file_ignore_patterns = nil,
 
     file_previewer = require("telescope.previewers").vim_buffer_cat.new,
     grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
     qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
+
+    history = {
+      path = "~/.local/share/nvim/databases/telescope_history.sqlite3",
+      limit = 100,
+    },
+  },
+
+  pickers = {
+    fd = {
+      mappings = {
+        n = {
+          ["kj"] = "close",
+        },
+      },
+    },
+
+    git_branches = {
+      mappings = {
+        i = {
+          ["<C-a>"] = false,
+        },
+      },
+    },
   },
 
   extensions = {
@@ -128,10 +162,16 @@ require("telescope").setup {
       reset_selection = true,
     },
 
+    ["ui-select"] = {
+      require("telescope.themes").get_dropdown {
+        -- even more opts
+      },
+    },
+
     -- frecency = {
     --   workspaces = {
-    --     ["conf"] = "/home/tj/.config/nvim/",
-    --     ["nvim"] = "/home/tj/build/neovim",
+    --     ["conf"] = "/home/david/.config/nvim/",
+    --     ["nvim"] = "/home/david/build/neovim",
     --   },
     -- },
   },
@@ -139,17 +179,22 @@ require("telescope").setup {
 
 -- pcall(require("telescope").load_extension, "cheat")
 -- pcall(require("telescope").load_extension, "arecibo")
-pcall(require("telescope").load_extension, "dap")
-pcall(require("telescope").load_extension, "flutter")
+-- require("telescope").load_extension "flutter"
 
--- pcall(require("telescope").load_extension, "fzy_native")
-pcall(require("telescope").load_extension, "fzf")
+_ = require("telescope").load_extension "dap"
+_ = require("telescope").load_extension "notify"
+_ = require("telescope").load_extension "file_browser"
+_ = require("telescope").load_extension "ui-select"
+_ = require("telescope").load_extension "fzf"
+_ = require("telescope").load_extension "git_worktree"
+_ = require("telescope").load_extension "neoclip"
+_ = require("telescope").load_extension "frecency"
+_ = require("telescope").load_extension "smart_history"
 
 if vim.fn.executable "gh" == 1 then
   pcall(require("telescope").load_extension, "gh")
   pcall(require("telescope").load_extension, "octo")
 end
-pcall(require("telescope").load_extension, "git_worktree")
 
 -- LOADED_FRECENCY = LOADED_FRECENCY or true
 -- local has_frecency = true

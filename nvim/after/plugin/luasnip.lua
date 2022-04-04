@@ -2,338 +2,245 @@ if vim.g.snippets ~= "luasnip" then
   return
 end
 
+-- Some shorthands stuff
 local ls = require "luasnip"
+local s = ls.snippet
+local sn = ls.snippet_node
+local t = ls.text_node
+local i = ls.insert_node
+local f = ls.function_node
+local c = ls.choice_node
+local d = ls.dynamic_node
+local r = ls.restore_node
+local l = require("luasnip.extras").lambda
+local rep = require("luasnip.extras").rep
+local p = require("luasnip.extras").partial
+local m = require("luasnip.extras").match
+local n = require("luasnip.extras").nonempty
+local dl = require("luasnip.extras").dynamic_lambda
+local fmt = require("luasnip.extras.fmt").fmt
+local fmta = require("luasnip.extras.fmt").fmta
+local types = require("luasnip.util.types")
+local conds = require("luasnip.extras.expand_conditions")
 
-ls.config.set_config {
-  history = true,
-  updateevents = "TextChanged,TextChangedI",
-}
-
--- create snippet
--- s(context, nodes, condition, ...)
-local snippet = ls.s
-local snippet_from_nodes = ls.sn
-
--- This a choice snippet. You can move through with <c-e> (in my config)
--- tbl_snip {
---   trig = "c",
---   t { "-- this has a choice: " },
---   c(1, { t {"hello"}, t {"world"}, }),
---   i(0),
--- }
-local c = ls.c -- choice node
-
-local f = ls.f -- function node
-local i = ls.i -- insert node
-local t = ls.t -- text node
-local d = ls.d -- dynamic node
-
-local str = function(text)
-  return t { text }
-end
-
-local newline = function(text)
-  return t { "", text }
-end
-
-local str_snip = function(trig, expanded)
-  return ls.parser.parse_snippet({ trig = trig }, expanded)
-end
-
-local tbl_snip = function(t)
-  return snippet({ trig = t.trig, dscr = t.desc }, { unpack(t) })
-end
-
-local function char_count_same(c1, c2)
-  local line = vim.api.nvim_get_current_line()
-  local _, ct1 = string.gsub(line, c1, "")
-  local _, ct2 = string.gsub(line, c2, "")
-  return ct1 == ct2
-end
-
-local function neg(fn, ...)
-  return not fn(...)
-end
-
--- {{{ Go stuff
-local ts_locals = require "nvim-treesitter.locals"
-local ts_utils = require "nvim-treesitter.ts_utils"
-
-local get_node_text = vim.treesitter.get_node_text
-
-vim.treesitter.set_query(
-  "go",
-  "LuaSnip_Result",
-  [[
-  [
-    (method_declaration result: (*) @id)
-    (function_declaration result: (*) @id)
-    (func_literal result: (*) @id)
-  ]
-]]
-)
-
-local transform = function(text, info)
-  if text == "int" then
-    return str "0"
-  elseif text == "error" then
-    if info then
-      info.index = info.index + 1
-
-      return c(info.index, {
-        str(string.format('errors.Wrap(%s, "%s")', info.err_name, info.func_name)),
-        str(info.err_name),
-      })
-    else
-      return str "err"
-    end
-  elseif text == "bool" then
-    return str "false"
-  elseif string.find(text, "*", 1, true) then
-    return str "nil"
+-- Setup keys
+-- <c-k> is my expansion key
+-- this will expand the current item or jump to the next item within the snippet.
+vim.keymap.set({ "i", "s" }, "<c-k>", function()
+  if ls.expand_or_jumpable() then
+    ls.expand_or_jump()
   end
+end, { silent = true })
 
-  return str(text)
-end
-
-local handlers = {
-  ["parameter_list"] = function(node, info)
-    local result = {}
-
-    local count = node:named_child_count()
-    for i = 0, count - 1 do
-      table.insert(result, transform(get_node_text(node:named_child(i), 0), info))
-      if i ~= count - 1 then
-        table.insert(result, t { ", " })
-      end
-    end
-
-    return result
-  end,
-
-  ["type_identifier"] = function(node, info)
-    local text = get_node_text(node, 0)
-    return { transform(text, info) }
-  end,
-}
-
-local function go_result_type(info)
-  local cursor_node = ts_utils.get_node_at_cursor()
-  local scope = ts_locals.get_scope_tree(cursor_node, 0)
-
-  local function_node
-  for _, v in ipairs(scope) do
-    if v:type() == "function_declaration" or v:type() == "method_declaration" or v:type() == "func_literal" then
-      function_node = v
-      break
-    end
+-- <c-j> is my jump backwards key.
+-- this always moves to the previous item within the snippet
+vim.keymap.set({ "i", "s" }, "<c-j>", function()
+  if ls.jumpable(-1) then
+    ls.jump(-1)
   end
+end, { silent = true })
 
-  local query = vim.treesitter.get_query("go", "LuaSnip_Result")
-  for id, node in query:iter_captures(function_node, 0) do
-    if handlers[node:type()] then
-      return handlers[node:type()](node, info)
-    end
+-- <c-l> is selecting within a list of options.
+-- This is useful for choice nodes (introduced in the forthcoming episode 2)
+vim.keymap.set("i", "<c-l>", function()
+  if ls.choice_active() then
+    ls.change_choice(1)
   end
-end
--- }}}
-local shortcut = function(val)
-  if type(val) == "string" then
-    return { t { val }, i(0) }
-  end
+end)
 
-  if type(val) == "table" then
-    for k, v in ipairs(val) do
-      if type(v) == "string" then
-        val[k] = t { v }
-      end
-    end
-  end
+vim.keymap.set("i", "<c-u>", require "luasnip.extras.select_choice")
 
-  return val
-end
+-- Every unspecified option will be set to the default.
+ls.config.set_config({
+	history = true,
+	-- Update more often, :h events for more info.
+	update_events = "TextChanged,TextChangedI",
+	-- Snippets aren't automatically removed if their text is deleted.
+	-- `delete_check_events` determines on which events (:h events) a check for
+	-- deleted snippets is performed.
+	-- This can be especially useful when `history` is enabled.
+	delete_check_events = "TextChanged",
+	ext_opts = {
+		[types.choiceNode] = {
+			active = {
+				virt_text = { { "choiceNode", "Comment" } },
+			},
+		},
+	},
+	-- treesitter-hl has 100, use something higher (default is 200).
+	ext_base_prio = 300,
+    snip_env = {ls = require "luasnip"},
+	-- minimal increase in priority.
+	ext_prio_increase = 1,
+	enable_autosnippets = true,
+	-- mapping for cutting selected text so it's usable as SELECT_DEDENT,
+	-- SELECT_RAW or TM_SELECTED_TEXT (mapped via xmap).
+	-- store_selection_keys = "<Tab>",
+	-- luasnip uses this function to get the currently active filetype. This
+	-- is the (rather uninteresting) default, but it's possible to use
+	-- eg. treesitter for getting the current filetype by setting ft_func to
+	-- require("luasnip.extras.filetype_functions").from_cursor (requires
+	-- `nvim-treesitter/nvim-treesitter`). This allows correctly resolving
+	-- the current filetype in eg. a markdown-code block or `vim.cmd()`.
+	ft_func = function()
+		return vim.split(vim.bo.filetype, ".", true)
+	end,
+})
 
-local make = function(tbl)
-  local result = {}
-  for k, v in pairs(tbl) do
-    table.insert(result, (snippet({ trig = k, desc = v.desc }, shortcut(v))))
-  end
-
-  return result
-end
-
-local same = function(index)
-  return f(function(args)
-    return args[1]
-  end, { index })
-end
-
-local snippets = {}
-
--- snippets.all = {
---   snippet({ trig = "(" }, { t { "(" }, i(1), t { ")" }, i(0) }, neg, char_count_same, "%(", "%)"),
--- }
-
---stylua: ignore
-snippets.lua = make {
-  ignore = "--stylua: ignore",
-
-  lf = { 
-    desc = "table function" ,
-    "local ", i(1), " = function(", i(2), ")", newline "  ", i(0), newline "end",
-  },
-
-  -- TODO: I don't know how I would like to set this one up.
-  f = { "function(", i(1), ")", i(0), newline "end" },
-
-  test = { "mirrored: ", i(1), " // ", same(1), " | ", i(0)},
-
-  -- test = { "local ", i(1), ' = require("', f(function(args)
-  --   table.insert(RESULT, args[1])
-  --   return { "hi" }
-  -- end, { 1 }), '")', i(0) },
-
-  -- test = { i(1), " // ", d(2, function(args)
-  --   return snippet_from_nodes(nil, { str "hello" })
-  -- end, { 1 }), i(0) },
-}
-
-local go_ret_vals = function(args, old_state)
-  local info = { index = 0, err_name = args[1][1], func_name = args[2][1] }
-  return snippet_from_nodes(nil, go_result_type(info))
+-- args is a table, where 1 is the text in Placeholder 1, 2 the text in
+-- placeholder 2,...
+local function copy(args)
+	return args[1]
 end
 
---stylua: ignore
-snippets.go = make {
-  main = {
-    t { "func main() {", "\t" },
-    i(0),
-    t { "", "}" },
-  },
-
-  ef = {
-    i(1, { "val" }),
-    str ", err := ",
-    i(2, { "f" }),
-    str "(",
-    i(3),
-    str ")",
-    i(0),
-  },
-
-  efi = {
-    i(1, { "val" }),
-    ", ",
-    i(2, { "err" }),
-    " := ",
-    i(3, { "f" }),
-    "(",
-    i(4),
-    ")",
-    t { "", "if " },
-    same(2),
-    t { " != nil {", "\treturn " },
-    d(5, go_ret_vals, { 2, 3 }),
-    t { "", "}" },
-    i(0),
-  },
-
-  -- TODO: Fix this up so that it actually uses the tree sitter thing
-  ie = { "if err != nil {", "\treturn err", i(0), "}" },
-}
-
-snippets.rust = make {
-  modtest = {
-    t {
-      "#[cfg(test)]",
-      "mod test {",
-      "    use super::*;",
-      "    ",
-    },
-    i(0),
-    t {
-      "",
-      "}",
-    },
-  },
-
-  test = {
-    t {
-      "#[test]",
-      "fn ",
-    },
-    i(1, "testname"),
-    t { "() {", "    " },
-    i(0),
-    t { "", "}" },
-  },
-
-  eq = { "assert_eq!(", i(1), ",", i(2), ");", i(0) },
-
-  enum = {
-    t { "#[derive(Debug, PartialEq)]", "enum " },
-    i(1, "Name"),
-    t { " {", "  " },
-    i(0),
-    t { "", "}" },
-  },
-
-  struct = {
-    t { "#[derive(Debug, PartialEq)]", "struct " },
-    i(1, "Name"),
-    t { " {", "    " },
-    i(0),
-    t { "", "}" },
-  },
-}
-
-local js_attr_split = function(args, old_state)
-  local val = args[1][1]
-  local split = vim.split(val, ".", { plain = true })
-
-  local choices = {}
-  local thus_far = {}
-  for index = 0, #split - 1 do
-    table.insert(thus_far, 1, split[#split - index])
-    table.insert(choices, t { table.concat(thus_far, ".") })
-  end
-
-  return snippet_from_nodes(nil, c(1, choices))
+-- 'recursive' dynamic snippet. Expands to some text followed by itself.
+local rec_ls
+rec_ls = function()
+	return sn(
+		nil,
+		c(1, {
+			-- Order is important, sn(...) first would cause infinite loop of expansion.
+			t(""),
+			sn(nil, { t({ "", "\t\\item " }), i(1), d(2, rec_ls, {}) }),
+		})
+	)
 end
 
-local fill_line = function(char)
-  return function()
-    local row = vim.api.nvim_win_get_cursor(0)[1]
-    local lines = vim.api.nvim_buf_get_lines(0, row - 2, row, false)
-    return string.rep(char, #lines[1] - #lines[2])
-  end
+-- complicated function for dynamicNode.
+local function jdocsnip(args, _, old_state)
+	-- !!! old_state is used to preserve user-input here. DON'T DO IT THAT WAY!
+	-- Using a restoreNode instead is much easier.
+	-- View this only as an example on how old_state functions.
+	local nodes = {
+		t({ "/**", " * " }),
+		i(1, "A short Description"),
+		t({ "", "" }),
+	}
+
+	-- These will be merged with the snippet; that way, should the snippet be updated,
+	-- some user input eg. text can be referred to in the new snippet.
+	local param_nodes = {}
+
+	if old_state then
+		nodes[2] = i(1, old_state.descr:get_text())
+	end
+	param_nodes.descr = nodes[2]
+
+	-- At least one param.
+	if string.find(args[2][1], ", ") then
+		vim.list_extend(nodes, { t({ " * ", "" }) })
+	end
+
+	local insert = 2
+	for indx, arg in ipairs(vim.split(args[2][1], ", ", true)) do
+		-- Get actual name parameter.
+		arg = vim.split(arg, " ", true)[2]
+		if arg then
+			local inode
+			-- if there was some text in this parameter, use it as static_text for this new snippet.
+			if old_state and old_state[arg] then
+				inode = i(insert, old_state["arg" .. arg]:get_text())
+			else
+				inode = i(insert)
+			end
+			vim.list_extend(
+				nodes,
+				{ t({ " * @param " .. arg .. " " }), inode, t({ "", "" }) }
+			)
+			param_nodes["arg" .. arg] = inode
+
+			insert = insert + 1
+		end
+	end
+
+	if args[1][1] ~= "void" then
+		local inode
+		if old_state and old_state.ret then
+			inode = i(insert, old_state.ret:get_text())
+		else
+			inode = i(insert)
+		end
+
+		vim.list_extend(
+			nodes,
+			{ t({ " * ", " * @return " }), inode, t({ "", "" }) }
+		)
+		param_nodes.ret = inode
+		insert = insert + 1
+	end
+
+	if vim.tbl_count(args[3]) ~= 1 then
+		local exc = string.gsub(args[3][2], " throws ", "")
+		local ins
+		if old_state and old_state.ex then
+			ins = i(insert, old_state.ex:get_text())
+		else
+			ins = i(insert)
+		end
+		vim.list_extend(
+			nodes,
+			{ t({ " * ", " * @throws " .. exc .. " " }), ins, t({ "", "" }) }
+		)
+		param_nodes.ex = ins
+		insert = insert + 1
+	end
+
+	vim.list_extend(nodes, { t({ " */" }) })
+
+	local snip = sn(nil, nodes)
+	-- Error on attempting overwrite.
+	snip.old_state = param_nodes
+	return snip
 end
 
-snippets.rst = make {
-  jsa = {
-    ":js:attr:`",
-    d(2, js_attr_split, { 1 }),
-    " <",
-    i(1),
-    ">",
-    "`",
-  },
+-- Make sure to not pass an invalid command, as io.popen() may write over nvim-text.
+local function bash(_, _, command)
+	local file = io.popen(command, "r")
+	local res = {}
+	for line in file:lines() do
+		table.insert(res, line)
+	end
+	return res
+end
 
-  link = { ".. _", i(1), ":" },
+-- Returns a snippet_node wrapped around an insert_node whose initial
+-- text value is set to the current date in the desired format.
+local date_input = function(args, snip, old_state, fmt)
+	local fmt = fmt or "%Y-%m-%d"
+	return sn(nil, i(1, os.date(fmt)))
+end
 
-  head = f(fill_line "=", {}),
-  sub = f(fill_line "-", {}),
-  subsub = f(fill_line "^", {}),
+-- snippets are added via ls.add_snippets(filetype, snippets[, opts]), where
+-- opts may specify the `type` of the snippets ("snippets" or "autosnippets",
+-- for snippets that should expand directly after the trigger is typed).
+--
+-- opts can also specify a key. By passing an unique key to each add_snippets, it's possible to reload snippets by
+-- re-`:luafile`ing the file in which they are defined (eg. this one).
+-- ls.add_snippets("all" , {s("fmt4", fmt("foo() { return []; }", i(1, "x"), { delimiters = "[]" })),
+-- ls.parser.parse_snippet(
+-- 		"lspsyn",
+-- 		"Wow! This ${1:Stuff} really ${2:works. ${3:Well, a bit.}}"
+-- 	)
 
-  ref = { ":ref:`", same(1), " <", i(1), ">`" },
-}
+-- -- 	-- When wordTrig is set to false, snippets may also expand inside other words.
+-- 	ls.parser.parse_snippet(
+-- 		{ trig = "te", wordTrig = false },
+-- 		"${1:cond} ? ${2:true} : ${3:false}"
+-- 	)
 
-ls.snippets = snippets
+-- 	-- When regTrig is set, trig is treated like a pattern, this snippet will expand after any number.
+-- 	ls.parser.parse_snippet({ trig = "%d", regTrig = true }, "A Number!!"),
+--   })
 
-vim.cmd [[
-  imap <silent><expr> <c-k> luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<c-k>'
-  inoremap <silent> <c-j> <cmd>lua require('luasnip').jump(-1)<CR>
-  imap <silent><expr> <C-l> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : '<C-l>'
-  snoremap <silent> <c-k> <cmd>lua require('luasnip').jump(1)<CR>
-  snoremap <silent> <c-j> <cmd>lua require('luasnip').jump(-1)<CR>
-]]
+
+-- in a lua file: search lua-, then c-, then all-snippets.
+-- ls.filetype_extend("lua", { "c" })
+ls.filetype_extend("lua", { "python" })
+-- in a cpp file: search c-snippets, then all-snippets only (no cpp-snippets!!).
+-- ls.filetype_set("cpp", { "c" })
+ls.filetype_set("py", {"python"})
+local snippet = ls.add_snippets
+snippet("all" , {s("fmt6", fmt("foo() { return []; }", i(1, "x"), { delimiters = "[]" })),})
+-- snippet("all" , {ls.parser.parse_snippet("def", "def $1($2):\n    $0")}) 
+require("luasnip.loaders.from_lua").load({paths=vim.api.nvim_get_runtime_file("lua/david/snips/ft/", true)})
+    
