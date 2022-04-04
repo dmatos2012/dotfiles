@@ -11,3 +11,5 @@ require "david.telescope.mappings"
 
 -- Jump To last position on file. see :help last-position-jump. Seen on reddit/neovim by justinmk
 vim.cmd [[autocmd BufReadPost * if @% !~# '\.git[\/\\]COMMIT_EDITMSG$' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif]]
+
+

@@ -232,7 +232,6 @@ return require("packer").startup {
     }
     use { "junegunn/fzf", run = "./install --all" }
     use { "junegunn/fzf.vim" }
-    use { "Vhyrro/neorg", branch = "unstable" }
   end,
   config = {
     luarocks = {

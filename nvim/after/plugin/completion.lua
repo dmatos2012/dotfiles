@@ -151,7 +151,6 @@ cmp.setup {
         path = "[path]",
         luasnip = "[snip]",
         gh_issues = "[issues]",
-        tn = "[TabNine]",
       },
     },
   },

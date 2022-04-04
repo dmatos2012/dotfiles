@@ -130,3 +130,10 @@ eval "$(starship init zsh)"
 
 # Allow installation of packages only inside virtualenv
 export PIP_REQUIRE_VIRTUALENV=1
+
+if [ -f "$HOME/.pythonrc.py" ]; then
+    export PYTHONSTARTUP=$HOME/.pythonrc.py
+fi
+
+
+alias luamake=/home/david/build/lua-language-server/3rd/luamake/luamake
