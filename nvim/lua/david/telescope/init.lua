@@ -177,13 +177,18 @@ function M.edit_zsh()
 end
 
 function M.fd()
-  local opts = themes.get_ivy {
-    hidden = false,
-    sorting_strategy = "ascending",
-    layout_config = { --[[ height = 9  ]]
+  -- local opts = themes.get_ivy {
+  --   hidden = false,
+  --   sorting_strategy = "ascending",
+  --   layout_config = { height = 9 },
+  -- }
+  require("telescope.builtin").fd {
+    sorting_strategy = "descending",
+    scroll_strategy = "cycle",
+    layout_config = {
+      -- height = 10,
     },
   }
-  require("telescope.builtin").fd(opts)
 end
 
 function M.fs()
@@ -201,7 +206,7 @@ function M.git_files()
     path = nil
   end
 
-  local width = 0.25
+  local width = 0.75
   if path and string.find(path, "sourcegraph.*sourcegraph", 1, false) then
     width = 0.5
   end

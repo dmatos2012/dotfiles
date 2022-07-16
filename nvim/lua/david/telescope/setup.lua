@@ -1,3 +1,7 @@
+if not pcall(require, "telescope") then
+  return
+end
+
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local action_layout = require "telescope.actions.layout"
@@ -13,10 +17,12 @@ end
 
 require("telescope").setup {
   defaults = {
-    prompt_prefix = "❯ ",
-    selection_caret = "❯ ",
-    entry_prefix = " ",
+    prompt_prefix = "> ",
+    selection_caret = "> ",
+    entry_prefix = "  ",
     multi_icon = "<>",
+
+    -- path_display = "truncate",
 
     winblend = 0,
 
@@ -93,6 +99,7 @@ require("telescope").setup {
           vim.api.nvim_input "<c-s-w>"
         end,
       },
+
       n = {
         ["<C-e>"] = actions.results_scrolling_down,
         ["<C-y>"] = actions.results_scrolling_up,
@@ -188,8 +195,9 @@ _ = require("telescope").load_extension "ui-select"
 _ = require("telescope").load_extension "fzf"
 _ = require("telescope").load_extension "git_worktree"
 _ = require("telescope").load_extension "neoclip"
-_ = require("telescope").load_extension "frecency"
-_ = require("telescope").load_extension "smart_history"
+
+pcall(require("telescope").load_extension, "smart_history")
+pcall(require("telescope").load_extension, "frecency")
 
 if vim.fn.executable "gh" == 1 then
   pcall(require("telescope").load_extension, "gh")

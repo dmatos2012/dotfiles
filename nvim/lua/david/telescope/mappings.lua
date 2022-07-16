@@ -1,3 +1,7 @@
+if not pcall(require, "telescope") then
+  return
+end
+
 local sorters = require "telescope.sorters"
 
 TelescopeMapArgs = TelescopeMapArgs or {}
@@ -27,6 +31,7 @@ vim.api.nvim_set_keymap("c", "<c-r><c-r>", "<Plug>(TelescopeFuzzyCommandSearch)"
 -- Dotfiles
 map_tele("<leader>en", "edit_neovim")
 map_tele("<leader>ez", "edit_zsh")
+map_tele("<space><space>d", "diagnostics")
 
 -- Search
 -- TODO: I would like to completely remove _mock from my search results here when I'm in SG/SG
@@ -53,11 +58,6 @@ map_tele("<space>fv", "find_nvim_source")
 map_tele("<space>fe", "file_browser")
 map_tele("<space>fz", "search_only_certain_files")
 
--- Sourcegraph
-map_tele("<space>sf", "sourcegraph_find")
-map_tele("<space>saf", "sourcegraph_about_find")
-map_tele("<space>sag", "sourcegraph_about_grep")
--- map_tele('<space>fz', 'sourcegraph_tips')
 
 -- Git
 map_tele("<space>gs", "git_status")

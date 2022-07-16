@@ -114,6 +114,9 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH=/usr/local/cuda-11.3/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda-11.3/lib64
 
+#Sumneko Lua
+export PATH="$HOME/build/lua-language-server/bin:$PATH"
+
 #History
 setopt EXTENDED_HISTORY
 setopt HIST_VERIFY

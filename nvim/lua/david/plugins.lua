@@ -8,7 +8,6 @@ return require("packer").startup {
     -- color stuff
     use "tjdevries/colorbuddy.nvim"
     use "tjdevries/gruvbuddy.nvim"
-    use "tjdevries/nlua.nvim"
     use "tjdevries/express_line.nvim"
     use "tjdevries/green_light.nvim"
 
@@ -73,6 +72,7 @@ return require("packer").startup {
         require("codelens_extensions").setup()
       end,
     }
+    use "jose-elias-alvarez/null-ls.nvim"
     use "tjdevries/lsp_extensions.nvim"
 
     use "onsails/lspkind-nvim"
