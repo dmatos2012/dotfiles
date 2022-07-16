@@ -110,6 +110,10 @@ export PATH=$PATH:/usr/local/go/bin
 #Rust package manager
 . "$HOME/.cargo/env"
 
+#Cuda
+export PATH=/usr/local/cuda-11.3/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda-11.3/lib64
+
 #History
 setopt EXTENDED_HISTORY
 setopt HIST_VERIFY
@@ -128,6 +132,9 @@ bindkey -s '^F' "tmux-sessionizer\n"
 # Starship prompt
 eval "$(starship init zsh)"
 
+#Zoxide prompt
+eval "$(zoxide init zsh)"
+
 # Allow installation of packages only inside virtualenv
 export PIP_REQUIRE_VIRTUALENV=1
 
@@ -137,3 +144,10 @@ fi
 
 
 alias luamake=/home/david/build/lua-language-server/3rd/luamake/luamake
+
+# Generated for envman. Do not edit.
+[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
+
+#Ros Noetic
+[ -f /opt/ros/noetic/setup.zsh ] && source /opt/ros/noetic/setup.zsh
+
