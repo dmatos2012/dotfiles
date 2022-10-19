@@ -193,7 +193,6 @@ return require("packer").startup {
     -- TREE SITTER:
     use "nvim-treesitter/nvim-treesitter"
     use "nvim-treesitter/playground"
-    use "vigoux/architext.nvim"
 
     use "nvim-treesitter/nvim-treesitter-textobjects"
     use "JoosepAlviste/nvim-ts-context-commentstring"
