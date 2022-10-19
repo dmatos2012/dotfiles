@@ -55,7 +55,6 @@ fi
 sources=(
   'aliases'
   'git'
-  'aws'
 )
 
 for s in "${sources[@]}"; do

@@ -1,5 +1,6 @@
 vim.cmd [[packadd packer.nvim]]
 vim.cmd [[packadd vimball]]
+local max_jobs = nil
 return require("packer").startup {
   function(use)
     use "wbthomason/packer.nvim"
@@ -22,12 +23,7 @@ return require("packer").startup {
 
     use "tjdevries/cyclist.vim"
     use "L3MON4D3/LuaSnip"
-    use {
-      "rcarriga/nvim-notify",
-      config = function()
-        vim.notify = require "notify"
-      end,
-    }
+    use "rcarriga/nvim-notify"
     use {
       "mhinz/vim-startify",
       -- cmd = {"SLoad", "SSave" },
@@ -37,7 +33,7 @@ return require("packer").startup {
     }
 
     -- GIT:
-    use "TimUntersberger/neogit"
+    -- use "TimUntersberger/neogit"
 
     -- Github integration
     if vim.fn.executable "gh" == 1 then
@@ -64,8 +60,9 @@ return require("packer").startup {
 
     -- LSP Plugins:
 
+    use "theHamsta/nvim-semantic-tokens"
     use "neovim/nvim-lspconfig"
-    use "wbthomason/lsp-status.nvim"
+    -- use "wbthomason/lsp-status.nvim"
     use "j-hui/fidget.nvim"
     use {
       "ericpubu/lsp_codelens_extensions.nvim",
@@ -132,6 +129,24 @@ return require("packer").startup {
       },
     }
 
+    -- Quickfix enhancements. See :help vim-qf
+    use "romainl/vim-qf"
+    use {
+      "glacambre/firenvim",
+      run = function()
+	vim.fn["firenvim#install"](0)
+      end,
+    }
+
+    use "mkitt/tabline.vim"
+
+
+    -- Crazy good box drawing
+    use "gyim/vim-boxdraw"
+
+    -- Better increment/decrement
+    use "monaqa/dial.nvim"
+
     -- For narrowing regions of text to look at them alone
     use {
       "chrisbra/NrrwRgn",
@@ -175,12 +190,13 @@ return require("packer").startup {
     use "hrsh7th/cmp-nvim-lsp-document-symbol"
     use "saadparwaiz1/cmp_luasnip"
     use "tamago324/cmp-zsh"
+
+    -- Comparators
+    use "lukas-reineke/cmp-under-comparator"
     -- Find and replace
     use "windwp/nvim-spectre"
 
     -- Debug adapter protocol
-    --   Have not yet checked this out, but looks awesome.
-    -- use 'puremourning/vimspector'
     use "mfussenegger/nvim-dap"
     use "rcarriga/nvim-dap-ui"
     use "theHamsta/nvim-dap-virtual-text"
@@ -209,9 +225,10 @@ return require("packer").startup {
     -- TEXT MANIUPLATION
     use "godlygeek/tabular" -- Quickly align text by pattern
     use "tpope/vim-repeat" -- Repeat actions better
-    use "tpope/vim-commentary"
     use "tpope/vim-abolish" -- Cool things with words!
     use "tpope/vim-characterize"
+
+    use "numToStr/Comment.nvim"
 
     use {
       "AndrewRadev/splitjoin.vim",
@@ -233,6 +250,7 @@ return require("packer").startup {
     use { "junegunn/fzf.vim" }
   end,
   config = {
+    max_jobs = max_jobs,
     luarocks = {
       python_cmd = "python3",
     },
