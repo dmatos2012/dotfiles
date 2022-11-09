@@ -189,7 +189,7 @@ local servers = {
   html = true,
   pylsp = true,
   vimls = true,
-  yamlls = true,
+  -- yamlls = true,
 
   cmake = (1 == vim.fn.executable "cmake-language-server"),
 
