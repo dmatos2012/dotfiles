@@ -9,21 +9,26 @@ end
 
 local list = require("nvim-treesitter.parsers").get_parser_configs()
 
--- list.sql = {
---   install_info = {
---     url = "https://github.com/DerekStride/tree-sitter-sql",
---     files = { "src/parser.c" },
---     branch = "main",
---   },
--- }
+
+-- list.lua = nil
 
 -- :h nvim-treesitter-query-extensions
+-- This isnt working because Tree-sitter-lua or tjdevries git repo is old
+-- The TS highlight groups are deprecated..fix later?
 local custom_captures = {
-  ["function.call"] = "LuaFunctionCall",
+  -- ["function.call.lua"] = "LuaFunctionCall",
   ["function.bracket"] = "Type",
   ["namespace.type"] = "TSNamespaceType",
 }
 
+-- require("nvim-treesitter.highlight").set_custom_captures(custom_captures)
+
+-- alt+<space>, alt+p -> swap next
+-- alt+<backspace>, alt+p -> swap previous
+-- swap_previous = {
+--   ["<M-s><M-P>"] = "@parameter.inner",
+--   ["<M-s><M-F>"] = "@function.outer",
+-- },
 local swap_next, swap_prev = (function()
   local swap_objects = {
     p = "@parameter.inner",
@@ -44,12 +49,18 @@ local swap_next, swap_prev = (function()
 end)()
 
 local _ = require("nvim-treesitter.configs").setup {
-  ensure_installed = { "go", "norg", "toml", "query", "html", "python", "rust", "bash" },
+  ensure_installed = {
+    "html",
+    "markdown",
+    "python",
+    "rust",
+    "toml",
+  },
 
   highlight = {
     enable = true,
     use_languagetree = false,
-    disable = { "json" },
+    -- disable = { "json" },
     custom_captures = custom_captures,
   },
 
@@ -65,7 +76,6 @@ local _ = require("nvim-treesitter.configs").setup {
       },
     },
 
-    -- TODO: This seems broken...
     navigation = {
       enable = false,
       keymaps = {
@@ -87,6 +97,11 @@ local _ = require("nvim-treesitter.configs").setup {
 
   context_commentstring = {
     enable = true,
+
+    -- With Comment.nvim, we don't need to run this on the autocmd.
+    -- Only run it in pre-hook
+    enable_autocmd = false,
+
     config = {
       c = "// %s",
       lua = "-- %s",
@@ -99,6 +114,7 @@ local _ = require("nvim-treesitter.configs").setup {
       set_jumps = true,
 
       goto_next_start = {
+        ["]p"] = "@parameter.inner",
         ["]m"] = "@function.outer",
         ["]]"] = "@class.outer",
       },
@@ -107,6 +123,7 @@ local _ = require("nvim-treesitter.configs").setup {
         ["]["] = "@class.outer",
       },
       goto_previous_start = {
+        ["[p"] = "@parameter.inner",
         ["[m"] = "@function.outer",
         ["[["] = "@class.outer",
       },
@@ -127,6 +144,9 @@ local _ = require("nvim-treesitter.configs").setup {
 
         ["aa"] = "@parameter.outer",
         ["ia"] = "@parameter.inner",
+
+        ["av"] = "@variable.outer",
+        ["iv"] = "@variable.inner",
       },
     },
 
@@ -161,6 +181,10 @@ local _ = require("nvim-treesitter.configs").setup {
 local read_query = function(filename)
   return table.concat(vim.fn.readfile(vim.fn.expand(filename)), "\n")
 end
+
+-- Overrides any existing tree sitter query for a particular name
+-- vim.treesitter.set_query("rust", "highlights", read_query "~/.config/nvim/queries/rust/highlights.scm")
+-- vim.treesitter.set_query("sql", "highlights", read_query "~/.config/nvim/queries/sql/highlights.scm")
 
 vim.cmd [[highlight IncludedC guibg=#373b41]]
 

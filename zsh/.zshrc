@@ -16,6 +16,9 @@ export EDITOR="nvim"
 export SHELL=/bin/zsh
 
 
+#Add rustup completions
+fpath+=~/.zfunc
+
 # Basic auto/tab complete:
 autoload -U compinit
 zstyle ':completion:*' menu select
@@ -55,7 +58,6 @@ fi
 sources=(
   'aliases'
   'git'
-  'aws'
 )
 
 for s in "${sources[@]}"; do

@@ -1,38 +1,54 @@
-local imap = require("david.keymap").imap
-local nmap = require("david.keymap").nmap
-
-local has_lsp, lspconfig = pcall(require, "lspconfig")
-if not has_lsp then
+local lspconfig = vim.F.npcall(require, "lspconfig")
+if not lspconfig then
   return
 end
 
-local lspconfig_util = require "lspconfig.util"
+local imap = require("david.keymap").imap
+local nmap = require("david.keymap").nmap
+local autocmd = require("david.auto").autocmd
+local autocmd_clear = vim.api.nvim_clear_autocmds
 
-local nvim_status = require "lsp-status"
+local semantic = vim.F.npcall(require, "nvim-semantic-tokens")
+
+local is_mac = vim.fn.has "macunix" == 1
+
+local lspconfig_util = require "lspconfig.util"
 
 local telescope_mapper = require "david.telescope.mappings"
 local handlers = require "david.lsp.handlers"
 
--- Can set this lower if needed.
-require("vim.lsp.log").set_level "debug"
--- require("vim.lsp.log").set_level "trace"
-
-local status = require "david.lsp.status"
-status.activate()
 
 local custom_init = function(client)
   client.config.flags = client.config.flags or {}
   client.config.flags.allow_incremental_sync = true
 end
 
+local augroup_highlight = vim.api.nvim_create_augroup("custom-lsp-references", { clear = true })
+local augroup_codelens = vim.api.nvim_create_augroup("custom-lsp-codelens", { clear = true })
+local augroup_format = vim.api.nvim_create_augroup("custom-lsp-format", { clear = true })
+local augroup_semantic = vim.api.nvim_create_augroup("custom-lsp-semantic", { clear = true })
+
+local autocmd_format = function(async, filter)
+  vim.api.nvim_clear_autocmds { buffer = 0, group = augroup_format }
+  vim.api.nvim_create_autocmd("BufWritePre", {
+    buffer = 0,
+    callback = function()
+      vim.lsp.buf.format { async = async, filter = filter }
+    end,
+  })
+end
+
 local filetype_attach = setmetatable({
-  go = function(client)
-    vim.cmd [[
-      augroup lsp_buf_format
-        au! BufWritePre <buffer>
-        autocmd BufWritePre <buffer> :lua vim.lsp.buf.formatting_sync()
-      augroup END
-    ]]
+  go = function()
+    autocmd_format(false)
+  end,
+
+  scss = function()
+    autocmd_format(false)
+  end,
+
+  css = function()
+    autocmd_format(false)
   end,
 
   rust = function()
@@ -41,17 +57,9 @@ local filetype_attach = setmetatable({
       query = "#",
     }, true)
 
-    -- vim.cmd [[
-    --   autocmd BufEnter,BufWritePost <buffer> :lua require('lsp_extensions.inlay_hints').request {aligned = true, prefix = " » "}
-    -- ]]
-
-    vim.cmd [[
-      augroup lsp_buf_format
-        au! BufWritePre <buffer>
-        autocmd BufWritePre <buffer> :lua vim.lsp.buf.formatting_sync()
-      augroup END
-    ]]
+    autocmd_format(false)
   end,
+
 }, {
   __index = function()
     return function() end
@@ -76,15 +84,13 @@ local buf_inoremap = function(opts)
   imap(opts)
 end
 
-local custom_attach = function(client)
+local custom_attach = function(client, bufnr)
   local filetype = vim.api.nvim_buf_get_option(0, "filetype")
-
-  nvim_status.on_attach(client)
 
   buf_inoremap { "<c-s>", vim.lsp.buf.signature_help }
 
   buf_nnoremap { "<space>cr", vim.lsp.buf.rename }
-  telescope_mapper("<space>ca", "lsp_code_actions", nil, true)
+  buf_nnoremap { "<space>ca", vim.lsp.buf.code_action }
 
   buf_nnoremap { "gd", vim.lsp.buf.definition }
   buf_nnoremap { "gD", vim.lsp.buf.declaration }
@@ -106,24 +112,24 @@ local custom_attach = function(client)
   vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
 
   -- Set autocommands conditional on server_capabilities
-  if client.resolved_capabilities.document_highlight then
-    vim.cmd [[
-      augroup lsp_document_highlight
-        autocmd! * <buffer>
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-      augroup END
-    ]]
+  if client.server_capabilities.documentHighlightProvider then
+    autocmd_clear { group = augroup_highlight, buffer = bufnr }
+    autocmd { "CursorHold", augroup_highlight, vim.lsp.buf.document_highlight, buffer = bufnr }
+    autocmd { "CursorMoved", augroup_highlight, vim.lsp.buf.clear_references, buffer = bufnr }
   end
 
-  if client.resolved_capabilities.code_lens then
-    vim.cmd [[
-      augroup lsp_document_codelens
-        au! * <buffer>
-        autocmd BufEnter ++once         <buffer> lua require"vim.lsp.codelens".refresh()
-        autocmd BufWritePost,CursorHold <buffer> lua require"vim.lsp.codelens".refresh()
-      augroup END
-    ]]
+  if false and client.server_capabilities.codeLensProvider then
+    if filetype ~= "elm" then
+      autocmd_clear { group = augroup_codelens, buffer = bufnr }
+      autocmd { "BufEnter", augroup_codelens, vim.lsp.codelens.refresh, bufnr, once = true }
+      autocmd { { "BufWritePost", "CursorHold" }, augroup_codelens, vim.lsp.codelens.refresh, bufnr }
+    end
+  end
+
+  local caps = client.server_capabilities
+  if semantic and caps.semanticTokensProvider and caps.semanticTokensProvider.full then
+    autocmd_clear { group = augroup_semantic, buffer = bufnr }
+    autocmd { "TextChanged", augroup_semantic, vim.lsp.buf.semantic_tokens_full, bufnr }
   end
 
   -- Attach any filetype specific options to the client
@@ -131,23 +137,61 @@ local custom_attach = function(client)
 end
 
 local updated_capabilities = vim.lsp.protocol.make_client_capabilities()
-updated_capabilities = vim.tbl_deep_extend("keep", updated_capabilities, nvim_status.capabilities)
-updated_capabilities.textDocument.codeLens = { dynamicRegistration = false }
-updated_capabilities = require("cmp_nvim_lsp").update_capabilities(updated_capabilities)
 
--- TODO: check if this is the problem.
+-- Completion configuration
+require("cmp_nvim_lsp").default_capabilities(updated_capabilities)
 updated_capabilities.textDocument.completion.completionItem.insertReplaceSupport = false
 
--- vim.lsp.buf_request(0, "textDocument/codeLens", { textDocument = vim.lsp.util.make_text_document_params() })
+-- Semantic token configuration
+if semantic then
+  semantic.setup {
+    preset = "default",
+    highlighters = { require "nvim-semantic-tokens.table-highlighter" },
+  }
+
+  semantic.extend_capabilities(updated_capabilities)
+end
+
+updated_capabilities.textDocument.codeLens = { dynamicRegistration = false }
+
+local rust_analyzer, rust_analyzer_cmd = nil, { "rustup", "run", "nightly", "rust-analyzer" }
+local has_rt, rt = pcall(require, "rust-tools")
+if has_rt then
+  local extension_path = vim.fn.expand "~/.vscode/extensions/sadge-vscode/extension/"
+  local codelldb_path = extension_path .. "adapter/codelldb"
+  local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
+
+  rt.setup {
+    server = {
+      cmd = rust_analyzer_cmd,
+      capabilities = updated_capabilities,
+      on_attach = custom_attach,
+    },
+    dap = {
+      adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path),
+    },
+    tools = {
+      inlay_hints = {
+        auto = false,
+      },
+    },
+  }
+else
+  rust_analyzer = {
+    cmd = rust_analyzer_cmd,
+  }
+end
 
 local servers = {
-  pylsp = true,
+  -- Also uses `shellcheck` and `explainshell`
   bashls = true,
+  eslint = true,
+  html = true,
+  pylsp = true,
   vimls = true,
-  yamlls = true,
+  -- yamlls = true,
 
   cmake = (1 == vim.fn.executable "cmake-language-server"),
-  dartls = pcall(require, "flutter-tools"),
 
   clangd = {
     cmd = {
@@ -157,59 +201,12 @@ local servers = {
       "--clang-tidy",
       "--header-insertion=iwyu",
     },
-    -- Required for lsp-status
     init_options = {
       clangdFileStatus = true,
     },
-    handlers = nvim_status.extensions.clangd.setup(),
   },
-
-  gopls = {
-    root_dir = function(fname)
-      local Path = require "plenary.path"
-
-      local absolute_cwd = Path:new(vim.loop.cwd()):absolute()
-      local absolute_fname = Path:new(fname):absolute()
-
-      if string.find(absolute_cwd, "/cmd/", 1, true) and string.find(absolute_fname, absolute_cwd, 1, true) then
-        return absolute_cwd
-      end
-
-      return lspconfig_util.root_pattern("go.mod", ".git")(fname)
-    end,
-
-    settings = {
-      gopls = {
-        codelenses = { test = true },
-      },
-    },
-
-    flags = {
-      debounce_text_changes = 200,
-    },
-  },
-
-  omnisharp = {
-    cmd = { vim.fn.expand "~/build/omnisharp/run", "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
-  },
-
-  rust_analyzer = true,
-  --   settings = {
-  --     ["rust-analyzer"] = {
-  --     },
-  -- },
-
-  tsserver = {
-    cmd = { "typescript-language-server", "--stdio" },
-    filetypes = {
-      "javascript",
-      "javascriptreact",
-      "javascript.jsx",
-      "typescript",
-      "typescriptreact",
-      "typescript.tsx",
-    },
-  },
+  rust_analyzer = rust_analyzer,
+  cssls = true,
 }
 
 local setup_server = function(server, config)
@@ -233,42 +230,98 @@ local setup_server = function(server, config)
   lspconfig[server].setup(config)
 end
 
+if is_mac then
+  local sumneko_cmd, sumneko_env = nil, nil
+  require("nvim-lsp-installer").setup {
+    automatic_installation = false,
+    ensure_installed = { "sumneko_lua", "gopls" },
+  }
+
+  sumneko_cmd = {
+    vim.fn.stdpath "data" .. "/lsp_servers/sumneko_lua/extension/server/bin/lua-language-server",
+  }
+
+  local process = require "nvim-lsp-installer.core.process"
+  local path = require "nvim-lsp-installer.core.path"
+
+  sumneko_env = {
+    cmd_env = {
+      PATH = process.extend_path {
+        path.concat { vim.fn.stdpath "data", "lsp_servers", "sumneko_lua", "extension", "server", "bin" },
+      },
+    },
+  }
+
+  setup_server("sumneko_lua", {
+    settings = {
+      Lua = {
+        diagnostics = {
+          globals = {
+            -- vim
+            "vim",
+
+            -- Busted
+            "describe",
+            "it",
+            "before_each",
+            "after_each",
+            "teardown",
+            "pending",
+            "clear",
+
+            -- Colorbuddy
+            "Color",
+            "c",
+            "Group",
+            "g",
+            "s",
+
+            -- Custom
+            "RELOAD",
+          },
+        },
+
+        workspace = {
+          -- Make the server aware of Neovim runtime files
+          library = vim.api.nvim_get_runtime_file("", true),
+          checkThirdParty = false, -- OpenTelemetry annoying popup
+        },
+      },
+    },
+  })
+else
+  -- Load lua configuration from nlua.
+  _ = require("nlua.lsp.nvim").setup(lspconfig, {
+    on_init = custom_init,
+    on_attach = custom_attach,
+    capabilities = updated_capabilities,
+
+    root_dir = function(fname)
+      if string.find(vim.fn.fnamemodify(fname, ":p"), "xdg_config/nvim/") then
+        return vim.fn.expand "~/git/config_manager/xdg_config/nvim/"
+      end
+
+      -- ~/git/config_manager/xdg_config/nvim/...
+      return lspconfig_util.find_git_ancestor(fname) or lspconfig_util.path.dirname(fname)
+    end,
+
+    globals = {
+      -- Colorbuddy
+      "Color",
+      "c",
+      "Group",
+      "g",
+      "s",
+
+      -- Custom
+      "RELOAD",
+    },
+  })
+end
+
 for server, config in pairs(servers) do
   setup_server(server, config)
 end
-
--- Load lua configuration from nlua.
-_ = require("nlua.lsp.nvim").setup(lspconfig, {
-  on_init = custom_init,
-  on_attach = custom_attach,
-  capabilities = updated_capabilities,
-
-  root_dir = function(fname)
-    if string.find(vim.fn.fnamemodify(fname, ":p"), "xdg_config/nvim/") then
-      return vim.fn.expand "~/git/config_manager/xdg_config/nvim/"
-    end
-
-    -- ~/git/config_manager/xdg_config/nvim/...
-    return lspconfig_util.find_git_ancestor(fname) or lspconfig_util.path.dirname(fname)
-  end,
-
-  globals = {
-    -- Colorbuddy
-    "Color",
-    "c",
-    "Group",
-    "g",
-    "s",
-
-    -- Custom
-    "RELOAD",
-  },
-})
-
--- require("sg.lsp").setup {
---   on_init = custom_init,
---   on_attach = custom_attach,
--- }
 
 --[ An example of using functions...
 -- 0. nil -> do default (could be enabled or disabled)
@@ -297,24 +350,23 @@ _ = require("nlua.lsp.nvim").setup(lspconfig, {
 -- end
 --]]
 
--- python graveyard
--- lspconfig.pyls.setup {
---   plugins = {
---     pyls_mypy = {
---       enabled = true,
---       live_mode = false
---     }
---   },
---   on_init = custom_init,
---   on_attach = custom_attach,
---   capabilities = updated_capabilities,
--- }
+-- Set up null-ls
+local use_null = false
+if use_null then
+  require("null-ls").setup {
+    sources = {
+      -- require("null-ls").builtins.formatting.stylua,
+      -- require("null-ls").builtins.diagnostics.eslint,
+      -- require("null-ls").builtins.completion.spell,
+      -- require("null-ls").builtins.diagnostics.selene,
+      require("null-ls").builtins.formatting.prettierd,
+    },
+  }
+end
 
--- lspconfig.jedi_language_server.setup {
---   on_init = custom_init,
---   on_attach = custom_attach,
---   capabilities = updated_capabilities,
--- }
+-- Can set this lower if needed.
+-- require("vim.lsp.log").set_level "debug"
+-- require("vim.lsp.log").set_level "trace"
 
 return {
   on_init = custom_init,

@@ -18,16 +18,22 @@ vim.api.nvim_set_keymap(
   { noremap = true }
 )
 
-local lspkind = require "lspkind"
+local ok, lspkind = pcall(require, "lspkind")
+if not ok then
+  return
+end
+
 lspkind.init()
 
 local cmp = require "cmp"
 
 cmp.setup {
   mapping = {
+    ["<C-n>"] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
+    ["<C-p>"] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
     ["<C-d>"] = cmp.mapping.scroll_docs(-4),
     ["<C-f>"] = cmp.mapping.scroll_docs(4),
-    ["<C-e>"] = cmp.mapping.close(),
+    ["<C-e>"] = cmp.mapping.abort(),
     ["<c-y>"] = cmp.mapping(
       cmp.mapping.confirm {
         behavior = cmp.ConfirmBehavior.Insert,
@@ -151,6 +157,7 @@ cmp.setup {
         path = "[path]",
         luasnip = "[snip]",
         gh_issues = "[issues]",
+        tn = "[TabNine]",
       },
     },
   },
@@ -210,6 +217,14 @@ autocmd FileType lua lua require'cmp'.setup.buffer {
 \   },
 \ }
 --]]
+
+-- Add vim-dadbod-completion in sql files
+_ = vim.cmd [[
+  augroup DadbodSql
+    au!
+    autocmd FileType sql,mysql,plsql lua require('cmp').setup.buffer { sources = { { name = 'vim-dadbod-completion' } } }
+  augroup END
+]]
 
 _ = vim.cmd [[
   augroup CmpZsh

@@ -1,5 +1,3 @@
-local override = require "david.lsp.override"
-
 -- Jump directly to the first available definition every time.
 vim.lsp.handlers["textDocument/definition"] = function(_, result)
   if not result or vim.tbl_isempty(result) then
@@ -57,7 +55,7 @@ vim.lsp.codelens.display = require("gl.codelens").display
 --[[
 || brrr brrr brrr.... running test...
 || {
-||   arguments = { "file:///home/tjdevries/plugins/green_light.nvim/test/green_light/example_test.go", { "TestExample" }, vim.NIL },
+||   arguments = { "file:///home/david/plugins/green_light.nvim/test/green_light/example_test.go", { "TestExample" }, vim.NIL },
 ||   command = "gopls.test",
 ||   title = "run test"
 || }
@@ -74,19 +72,10 @@ vim.lsp.codelens.display = require("gl.codelens").display
 --
 --   TestRun
 --     :new({
---       file_pattern = "/home/tjdevries/plugins/green_light.nvim/test/green_light/...",
+--       file_pattern = "/home/david/plugins/green_light.nvim/test/green_light/...",
 --       test_pattern = "^" .. test_pattern .. "$",
 --     })
 --     :run()
 -- end
-
--- override.set("workspace/executeCommand", function(err, result, ctx, config)
---   if vim.bo[ctx.bufnr].filetype ~= "go" then
---     return override.get(ctx.method)(err, result, ctx, config)
---   end
---
---   print("filetype:", vim.bo[ctx.bufnr].filetype)
---   P(ctx)
--- end)
 
 return M
