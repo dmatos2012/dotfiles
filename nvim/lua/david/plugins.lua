@@ -237,6 +237,11 @@ return require("packer").startup {
 
     use "tpope/vim-surround" -- Surround text objects easily
 
+    -- Folds!
+    -- could not getting working
+    -- use {'kevinhwang91/nvim-ufo', requires = 'kevinhwang91/promise-async'}
+
+
     -- Async signs!
     use "lewis6991/gitsigns.nvim"
     -- Git worktree utility

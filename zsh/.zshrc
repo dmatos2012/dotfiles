@@ -130,7 +130,6 @@ setopt HIST_SAVE_NO_DUPS         # Dont write duplicate entries in the history f
 setopt inc_append_history
 setopt share_history
 
-bindkey -s '^F' "tmux-sessionizer\n"
 
 # Starship prompt
 eval "$(starship init zsh)"
