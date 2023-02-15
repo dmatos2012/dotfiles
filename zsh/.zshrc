@@ -153,3 +153,6 @@ alias luamake=/home/david/build/lua-language-server/3rd/luamake/luamake
 #Ros Noetic
 [ -f /opt/ros/noetic/setup.zsh ] && source /opt/ros/noetic/setup.zsh
 
+
+autoload -Uz compinit
+
