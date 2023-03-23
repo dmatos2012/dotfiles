@@ -7,9 +7,18 @@ return require("packer").startup {
     -- startup stuff
     use "lewis6991/impatient.nvim"
     -- color stuff
+    -- copilot
+    use {
+      "zbirenbaum/copilot.lua",
+      cmd = "Copilot",
+      event = "InsertEnter",
+      config = function()
+        require("copilot").setup({})
+      end,
+    }
     use "tjdevries/colorbuddy.nvim"
     use "tjdevries/gruvbuddy.nvim"
-    use "tjdevries/nlua.nvim"
+    -- use "tjdevries/nlua.nvim"
     use "tjdevries/express_line.nvim"
     use "tjdevries/green_light.nvim"
 
