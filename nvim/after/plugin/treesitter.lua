@@ -55,6 +55,7 @@ local _ = require("nvim-treesitter.configs").setup {
     "python",
     "rust",
     "toml",
+    "hcl",
   },
 
   highlight = {

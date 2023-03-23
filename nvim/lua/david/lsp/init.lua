@@ -188,6 +188,7 @@ local servers = {
   eslint = true,
   html = true,
   pylsp = true,
+  -- terraform_ls = true,
   vimls = true,
   -- yamlls = true,
 
