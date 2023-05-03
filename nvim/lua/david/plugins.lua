@@ -7,15 +7,7 @@ return require("packer").startup {
     -- startup stuff
     use "lewis6991/impatient.nvim"
     -- color stuff
-    -- copilot
-    use {
-      "zbirenbaum/copilot.lua",
-      cmd = "Copilot",
-      event = "InsertEnter",
-      config = function()
-        require("copilot").setup({})
-      end,
-    }
+
     use "tjdevries/colorbuddy.nvim"
     use "tjdevries/gruvbuddy.nvim"
     -- use "tjdevries/nlua.nvim"
@@ -250,6 +242,26 @@ return require("packer").startup {
     -- could not getting working
     -- use {'kevinhwang91/nvim-ufo', requires = 'kevinhwang91/promise-async'}
 
+    -- copilot
+    use {
+      "zbirenbaum/copilot.lua",
+      cmd = "Copilot",
+      event = "InsertEnter",
+      config = function()
+        require("copilot").setup({
+          suggestion = {
+            enabled = true,
+            auto_trigger = true,
+            debounce = 75,
+          },
+          filetypes = {
+            python = true,
+            rust = true,
+            ["*"] = false,
+          },
+        })
+      end,
+    }
 
     -- Async signs!
     use "lewis6991/gitsigns.nvim"
