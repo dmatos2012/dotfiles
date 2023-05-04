@@ -156,3 +156,5 @@ alias luamake=/home/david/build/lua-language-server/3rd/luamake/luamake
 
 autoload -Uz compinit
 
+
+eval "$(atuin init zsh)"

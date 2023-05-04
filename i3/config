@@ -206,12 +206,13 @@ exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 bindsym $mod+n exec nautilus --no-desktop --new-window
 
 # Switch my capslock for escape
-exec --no-startup-id setxkbmap -option caps:swapescape
+# exec --no-startup-id setxkbmap -option caps:swapescape
+exec --no-startup-id setxkbmap -option caps:escape
 
 # Assign workspaces
 assign [class="Slack"] $ws4
 assign [class="Spotify"] $ws3
-assign [class="Firefox"] $ws2
+assign [class="firefox"] $ws2
 
 #Lock screen
 bindsym $mod+z exec i3lock -t -i ~/Desktop/wallpapers/ice.png
@@ -239,6 +240,10 @@ exec_always --no-startup-id dunst -config ~/.config/dunst/dunstrc
 
 #Enable gaps gaps(since 4.22)
 gaps inner 5px
+
+# Maybe try one of this oens to fix the monitro stuff
+#  xrandr --output HDMI1 --off
+# xrandr --auto
 
 
 

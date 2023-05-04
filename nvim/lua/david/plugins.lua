@@ -8,6 +8,12 @@ return require("packer").startup {
     use "lewis6991/impatient.nvim"
     -- color stuff
 
+    -- attempt to make own plugin
+    use {
+        '~/rust/example-plugin/',
+        run = 'make',
+    }
+
     use "tjdevries/colorbuddy.nvim"
     use "tjdevries/gruvbuddy.nvim"
     -- use "tjdevries/nlua.nvim"

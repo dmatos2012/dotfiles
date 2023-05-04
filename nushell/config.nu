@@ -659,6 +659,9 @@ let-env config = {
 #Source starship
 source ~/.cache/starship/init.nu
 
+#Source atuin
+source ~/.local/share/atuin/init.nu
+
 # Aliases
 alias gs = git status
 alias gc = git checkout
