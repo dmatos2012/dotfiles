@@ -241,9 +241,18 @@ exec_always --no-startup-id dunst -config ~/.config/dunst/dunstrc
 #Enable gaps gaps(since 4.22)
 gaps inner 5px
 
-# Maybe try one of this oens to fix the monitro stuff
-#  xrandr --output HDMI1 --off
-# xrandr --auto
+# Maybe try one of this one to fix the monitor stuff
+exec_always --no-startup-id autorandr --change
+# If you get a problem with feh as well, look here
+# https://www.reddit.com/r/i3wm/comments/b76zvi/autorandr_and_feh_not_playing_well_together/
+
+# Unlock Gnome-Keyring (needed for aws-vault, passwords, etc)
+# https://wiki.archlinux.org/title/GNOME/Keyring#Using_the_keyring_outside_GNOME
+exec --no-startup-id dbus-update-activation-environment --all
+exec --no-startup-id gnome-keyring-daemon --start --components=secrets
+
+# Move workspace to other monitor
+bindsym $mod+Shift+m exec "i3-msg move workspace to output right"
 
 
 

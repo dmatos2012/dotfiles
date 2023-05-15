@@ -10,7 +10,7 @@ return require("packer").startup {
 
     -- attempt to make own plugin
     use {
-        '~/rust/example-plugin/',
+        '~/rust/todo-plugin/',
         run = 'make',
     }
 
