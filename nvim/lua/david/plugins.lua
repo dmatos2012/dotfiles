@@ -14,8 +14,12 @@ return require("packer").startup {
         run = 'make',
     }
 
+    -- Theme
     use "tjdevries/colorbuddy.nvim"
     use "tjdevries/gruvbuddy.nvim"
+    -- Add light theme here
+    use 'bbenzikry/snazzybuddy.nvim'
+
     -- use "tjdevries/nlua.nvim"
     use "tjdevries/express_line.nvim"
     use "tjdevries/green_light.nvim"
