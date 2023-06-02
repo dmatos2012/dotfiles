@@ -75,7 +75,11 @@ let-env NU_PLUGIN_DIRS = [
 # let-env PATH = ($env.PATH | split row (char esep) | prepend '/some/path')
 #
 #
-#Initialize startship
+#Initialize starship
 mkdir ~/.cache/starship
 starship init nu | save -f ~/.cache/starship/init.nu
-#
+
+# Initialize atuin
+atuin init nu --disable-up-arrow | save -f ~/.local/share/atuin/init.nu
+# atuin init nu | save -f ~/.local/share/atuin/init.nu
+

@@ -677,6 +677,11 @@ let-env PIP_REQUIRE_VIRTUALENV = 1
 
 # Custom functions
 #
+#
+def docker_clean () {
+    docker images -a --filter=dangling=true -q --no-trunc | lines | docker rmi $in -f
+    docker ps --filter=status=exited --filter=status=created -q | lines | docker rm $in
+}
 def del-branches (
     excepts:list   # don't delete branch in the list
 ) {

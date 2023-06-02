@@ -248,12 +248,22 @@ exec_always --no-startup-id autorandr --change
 
 # Unlock Gnome-Keyring (needed for aws-vault, passwords, etc)
 # https://wiki.archlinux.org/title/GNOME/Keyring#Using_the_keyring_outside_GNOME
-exec --no-startup-id dbus-update-activation-environment --all
-exec --no-startup-id gnome-keyring-daemon --start --components=secrets
+# exec --no-startup-id dbus-update-activation-environment --all
+# exec --no-startup-id gnome-keyring-daemon --start --components=secrets
+# perhaps this one is needed for the ssh part(not sure)
+# exec --no-startup-id gnome-keyring-daemon --start --components=ssh
 
 # Move workspace to other monitor
 bindsym $mod+Shift+m exec "i3-msg move workspace to output right"
 
+#Hopefully this will work?
+exec --no-startup-id gnome-keyring-daemon --start --components=ssh
+
+# Add floating for notes/vim
+# bindsym $mod+BackSpace exec kitty -t "vim-float" -e "vim -c 'cd ~/work/vim'"for_window[title="^vim-float$"] floating enable resize set 500 400
+bindsym $mod+BackSpace exec kitty -T "vim-float"
+for_window [title="vim-float"] floating enable resize set 500 400
+# bindsym $mod+BackSpace exec kitty -T "vim-float"
 
 
 
