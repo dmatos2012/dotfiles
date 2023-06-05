@@ -11,14 +11,27 @@ return {
 
   {
     "zbirenbaum/copilot.lua",
+    event = "InsertEnter",
     config = function()
-      require("copilot").setup()
-    end,
+      require("copilot").setup({
+          suggestion = {
+            enabled = true,
+            auto_trigger = true,
+            debounce = 75,
+          },
+          filetypes = {
+            python = true,
+            rust = true,
+            ["*"] = false,
+          },
+        })
+      end,
   },
-  {
-    "zbirenbaum/copilot-cmp",
-    config = function()
-      require("copilot_cmp").setup()
-    end,
-  },
+  -- waaaay too slow disable
+  -- {
+  --   "zbirenbaum/copilot-cmp",
+  --   config = function()
+  --     require("copilot_cmp").setup()
+  --   end,
+  -- },
 }
