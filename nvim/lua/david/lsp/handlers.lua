@@ -55,7 +55,7 @@ vim.lsp.codelens.display = require("gl.codelens").display
 --[[
 || brrr brrr brrr.... running test...
 || {
-||   arguments = { "file:///home/david/plugins/green_light.nvim/test/green_light/example_test.go", { "TestExample" }, vim.NIL },
+||   arguments = { "file:///home/tjdevries/plugins/green_light.nvim/test/green_light/example_test.go", { "TestExample" }, vim.NIL },
 ||   command = "gopls.test",
 ||   title = "run test"
 || }
@@ -72,7 +72,7 @@ vim.lsp.codelens.display = require("gl.codelens").display
 --
 --   TestRun
 --     :new({
---       file_pattern = "/home/david/plugins/green_light.nvim/test/green_light/...",
+--       file_pattern = "/home/tjdevries/plugins/green_light.nvim/test/green_light/...",
 --       test_pattern = "^" .. test_pattern .. "$",
 --     })
 --     :run()

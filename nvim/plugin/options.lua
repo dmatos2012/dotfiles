@@ -4,20 +4,15 @@ local opt = vim.opt
 
 -- Ignore compiled files
 opt.wildignore = "__pycache__"
-opt.wildignore = opt.wildignore + { "*.o", "*~", "*.pyc", "*pycache*" }
-
-opt.wildmode = { "longest", "list", "full" }
+opt.wildignore:append { "*.o", "*~", "*.pyc", "*pycache*" }
+opt.wildignore:append { "Cargo.lock", "Cargo.Bazel.lock" }
 
 -- Cool floating window popup menu for completion on command line
 opt.pumblend = 17
-
-opt.wildmode = opt.wildmode - "list"
-opt.wildmode = opt.wildmode + { "longest", "full" }
-
+opt.wildmode = "longest:full"
 opt.wildoptions = "pum"
 
 opt.showmode = false
-opt.undofile = true
 opt.showcmd = true
 opt.cmdheight = 1 -- Height of the command bar
 opt.incsearch = true -- Makes search act like search in modern browsers
@@ -34,23 +29,24 @@ opt.updatetime = 1000 -- Make updates happen faster
 opt.hlsearch = true -- I wouldn't use this without my DoNoHL function
 opt.scrolloff = 10 -- Make it so there are always ten lines below my cursor
 
+-- opt.smoothscroll = true
+
 -- Cursorline highlighting control
 --  Only have it on in the active buffer
 opt.cursorline = true -- Highlight the current line
 local group = vim.api.nvim_create_augroup("CursorLineControl", { clear = true })
-vim.api.nvim_create_autocmd("WinLeave", {
-  group = group,
-  callback = function()
-    vim.opt_local.cursorline = false
-  end,
-})
-vim.api.nvim_create_autocmd("WinEnter", {
-  group = group,
-  callback = function()
-    vim.opt_local.cursorline = true
-  end,
-})
-
+local set_cursorline = function(event, value, pattern)
+  vim.api.nvim_create_autocmd(event, {
+    group = group,
+    pattern = pattern,
+    callback = function()
+      vim.opt_local.cursorline = value
+    end,
+  })
+end
+set_cursorline("WinLeave", false)
+set_cursorline("WinEnter", true)
+set_cursorline("FileType", false, "TelescopePrompt")
 
 -- Tabs
 opt.autoindent = true
@@ -78,7 +74,7 @@ opt.inccommand = "split"
 opt.swapfile = false -- Living on the edge
 opt.shada = { "!", "'1000", "<50", "s10", "h" }
 
-opt.mouse = "n"
+opt.mouse = "a"
 
 -- Helpful related items:
 --   1. :center, :left, :right
@@ -101,3 +97,8 @@ opt.joinspaces = false -- Two spaces and grade school, we're done
 
 -- set fillchars=eob:~
 opt.fillchars = { eob = "~" }
+
+vim.opt.diffopt = { "internal", "filler", "closeoff", "hiddenoff", "algorithm:minimal" }
+
+vim.opt.undofile = true
+vim.opt.signcolumn = "yes"

@@ -1,11 +1,24 @@
+-- Explore:
 -- - External terminal
 -- - make the virt lines thing available if ppl want it
 -- - find the nearest codelens above cursor
+
+-- Must Show:
+-- - Connect to an existing neovim instance, and step through some plugin
+-- - Connect using configuration from VS **** json file (see if VS **** is actually just "it works" LUL)
+-- - Completion in the repl, very cool for exploring objects / data
+
+-- - Generating your own config w/ dap.run (can show rust example) (rust BTW)
 
 local has_dap, dap = pcall(require, "dap")
 if not has_dap then
   return
 end
+
+vim.fn.sign_define("DapBreakpoint", { text = "ß", texthl = "", linehl = "", numhl = "" })
+vim.fn.sign_define("DapBreakpointCondition", { text = "ü", texthl = "", linehl = "", numhl = "" })
+-- Setup cool Among Us as avatar
+vim.fn.sign_define("DapStopped", { text = "ඞ", texthl = "Error" })
 
 require("nvim-dap-virtual-text").setup {
   enabled = true,
@@ -29,7 +42,7 @@ require("nvim-dap-virtual-text").setup {
 
 -- TODO: How does terminal work?
 dap.defaults.fallback.external_terminal = {
-  command = "/home/tjdevries/.local/bin/kitty",
+  command = "/home/david/.local/bin/kitty",
   args = { "-e" },
 }
 
@@ -165,7 +178,7 @@ dap.configurations.c = {
     "executable": "<path to the elf/exe file relativ to workspace root in order to load the symbols>",
     "target": "X.X.X.X:9999",
     "remote": true,
-    "cwd": "${workspaceRoot}", 
+    "cwd": "${workspaceRoot}",
     "gdbpath": "path/to/your/gdb",
     "autorun": [
             "any gdb commands to initiate your environment, if it is needed"
@@ -186,9 +199,9 @@ dap.configurations.c = {
   --   name = "Launch rust-analyzer lsif",
   --   type = "lldb",
   --   request = "launch",
-  --   program = "/home/tjdevries/sourcegraph/rust-analyzer.git/monikers-1/target/debug/rust-analyzer",
-  --   args = { "lsif", "/home/tjdevries/build/rmpv/" },
-  --   cwd = "/home/tjdevries/sourcegraph/rust-analyzer.git/monikers-1/",
+  --   program = "/home/david/sourcegraph/rust-analyzer.git/monikers-1/target/debug/rust-analyzer",
+  --   args = { "lsif", "/home/david/build/rmpv/" },
+  --   cwd = "/home/david/sourcegraph/rust-analyzer.git/monikers-1/",
   --   stopOnEntry = false,
   --   runInTerminal = false,
   -- },
@@ -196,9 +209,9 @@ dap.configurations.c = {
     name = "Launch ./build/bin/nvim",
     type = "lldb",
     request = "launch",
-    program = "/home/tjdevries/build/neovim.git/lua_autocmd/build/bin/nvim",
+    program = "/home/david/build/neovim.git/lua_autocmd/build/bin/nvim",
     args = { "--headless" },
-    cwd = "/home/tjdevries/build/neovim.git/lua_autocmd/",
+    cwd = "/home/david/build/neovim.git/lua_autocmd/",
     stopOnEntry = false,
     runInTerminal = false,
   },
@@ -240,85 +253,6 @@ dap.adapters.go = function(callback, _)
   end, 100)
 end
 
-dap.configurations.go = {
-  {
-    type = "go",
-    name = "Debug (from vscode-go)",
-    request = "launch",
-    showLog = false,
-    program = "${file}",
-    dlvToolPath = vim.fn.exepath "dlv", -- Adjust to where delve is installed
-  },
-  {
-    type = "go",
-    name = "Debug (No File)",
-    request = "launch",
-    program = "",
-  },
-  {
-    type = "go",
-    name = "Debug",
-    request = "launch",
-    program = "${file}",
-    showLog = true,
-    -- console = "externalTerminal",
-    -- dlvToolPath = vim.fn.exepath "dlv",
-  },
-  {
-    name = "Test Current File",
-    type = "go",
-    request = "launch",
-    showLog = true,
-    mode = "test",
-    program = ".",
-    dlvToolPath = vim.fn.exepath "dlv",
-  },
-  {
-    type = "go",
-    name = "Run lsif-clang indexer",
-    request = "launch",
-    showLog = true,
-    program = ".",
-    args = {
-      "--indexer",
-      "lsif-clang compile_commands.json",
-      "--dir",
-      vim.fn.expand "~/sourcegraph/lsif-clang/functionaltest",
-      "--debug",
-    },
-    dlvToolPath = vim.fn.exepath "dlv",
-  },
-  {
-    type = "go",
-    name = "Run lsif-go-imports in smol_go",
-    request = "launch",
-    showLog = true,
-    program = "./cmd/lsif-go",
-    args = {
-      "--project-root=/home/tjdevries/sourcegraph/smol_go/",
-      "--repository-root=/home/tjdevries/sourcegraph/smol_go/",
-      "--module-root=/home/tjdevries/sourcegraph/smol_go/",
-      "--repository-remote=github.com/tjdevries/smol_go",
-      "--no-animation",
-    },
-    dlvToolPath = vim.fn.exepath "dlv",
-  },
-  {
-    type = "go",
-    name = "Run lsif-go-imports in sourcegraph",
-    request = "launch",
-    showLog = true,
-    program = "./cmd/lsif-go",
-    args = {
-      "--project-root=/home/tjdevries/sourcegraph/sourcegraph.git/main",
-      "--repository-root=/home/tjdevries/sourcegraph/sourcegraph.git/main",
-      "--module-root=/home/tjdevries/sourcegraph/sourcegraph.git/main",
-      "--no-animation",
-    },
-    dlvToolPath = vim.fn.exepath "dlv",
-  },
-}
-
 dap.configurations.python = {
   {
     type = "python",
@@ -328,10 +262,23 @@ dap.configurations.python = {
     args = { "--target", "api" },
     console = "integratedTerminal",
   },
+  {
+    type = "python",
+    request = "launch",
+    name = "lsif",
+    program = "src/lsif/__main__.py",
+    args = {},
+    console = "integratedTerminal",
+  },
 }
 
 local dap_python = require "dap-python"
-dap_python.setup("~/.venvs/debugpy/bin/python", {
+dap_python.setup("python", {
+  -- So if configured correctly, this will open up new terminal.
+  --    Could probably get this to target a particular terminal
+  --    and/or add a tab to kitty or something like that as well.
+  console = "externalTerminal",
+
   include_configs = true,
 })
 
@@ -343,75 +290,75 @@ dap.adapters.lldb = {
   name = "lldb",
 }
 
-local extension_path = vim.fn.expand "~/.vscode/extensions/vadimcn.vscode-lldb-1.6.10/"
-local codelldb_path = extension_path .. "adapter/codelldb"
-local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
-
+-- local extension_path = vim.fn.expand "~/.vscode/extensions/vadimcn.vscode-lldb-1.7.0/"
+-- local codelldb_path = extension_path .. "adapter/codelldb"
+-- local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
+--
 -- dap.adapters.rt_lldb = {
 --   type = "executable",
 --   command = codelldb_path,
 --   name = "rt_lldb",
 -- }
 
-dap.adapters.rt_lldb = function(callback, _)
-  local stdout = vim.loop.new_pipe(false)
-  local stderr = vim.loop.new_pipe(false)
-  local handle
-  local pid_or_err
-  local port
-  local error_message = ""
-
-  local opts = {
-    stdio = { nil, stdout, stderr },
-    args = { "--liblldb", liblldb_path },
-    detached = true,
-  }
-
-  handle, pid_or_err = vim.loop.spawn(codelldb_path, opts, function(code)
-    stdout:close()
-    stderr:close()
-    handle:close()
-    if code ~= 0 then
-      print("codelldb exited with code", code)
-      print("error message", error_message)
-    end
-  end)
-
-  assert(handle, "Error running codelldb: " .. tostring(pid_or_err))
-
-  stdout:read_start(function(err, chunk)
-    assert(not err, err)
-    if chunk then
-      if not port then
-        local chunks = {}
-        for substring in chunk:gmatch "%S+" do
-          table.insert(chunks, substring)
-        end
-        port = tonumber(chunks[#chunks])
-        vim.schedule(function()
-          callback {
-            type = "server",
-            host = "127.0.0.1",
-            port = port,
-          }
-        end)
-      else
-        vim.schedule(function()
-          require("dap.repl").append(chunk)
-        end)
-      end
-    end
-  end)
-  stderr:read_start(function(_, chunk)
-    if chunk then
-      error_message = error_message .. chunk
-
-      vim.schedule(function()
-        require("dap.repl").append(chunk)
-      end)
-    end
-  end)
-end
+-- dap.adapters.rt_lldb = function(callback, _)
+--   local stdout = vim.loop.new_pipe(false)
+--   local stderr = vim.loop.new_pipe(false)
+--   local handle
+--   local pid_or_err
+--   local port
+--   local error_message = ""
+--
+--   local opts = {
+--     stdio = { nil, stdout, stderr },
+--     args = { "--liblldb", liblldb_path },
+--     detached = true,
+--   }
+--
+--   handle, pid_or_err = vim.loop.spawn(codelldb_path, opts, function(code)
+--     stdout:close()
+--     stderr:close()
+--     handle:close()
+--     if code ~= 0 then
+--       print("codelldb exited with code", code)
+--       print("error message", error_message)
+--     end
+--   end)
+--
+--   assert(handle, "Error running codelldb: " .. tostring(pid_or_err))
+--
+--   stdout:read_start(function(err, chunk)
+--     assert(not err, err)
+--     if chunk then
+--       if not port then
+--         local chunks = {}
+--         for substring in chunk:gmatch "%S+" do
+--           table.insert(chunks, substring)
+--         end
+--         port = tonumber(chunks[#chunks])
+--         vim.schedule(function()
+--           callback {
+--             type = "server",
+--             host = "127.0.0.1",
+--             port = port,
+--           }
+--         end)
+--       else
+--         vim.schedule(function()
+--           require("dap.repl").append(chunk)
+--         end)
+--       end
+--     end
+--   end)
+--   stderr:read_start(function(_, chunk)
+--     if chunk then
+--       error_message = error_message .. chunk
+--
+--       vim.schedule(function()
+--         require("dap.repl").append(chunk)
+--       end)
+--     end
+--   end)
+-- end
 
 dap.configurations.rust = {
   {
@@ -441,9 +388,19 @@ dap.configurations.rust = {
     name = "Launch rust-analyzer lsif",
     type = "lldb",
     request = "launch",
-    program = "/home/tjdevries/sourcegraph/rust-analyzer.git/monikers-1/target/debug/rust-analyzer",
-    args = { "lsif", "/home/tjdevries/build/rmpv/" },
-    cwd = "/home/tjdevries/sourcegraph/rust-analyzer.git/monikers-1/",
+    program = "/home/david/sourcegraph/rust-analyzer.git/monikers-1/target/debug/rust-analyzer",
+    args = { "lsif", "/home/david/build/rmpv/" },
+    cwd = "/home/david/sourcegraph/rust-analyzer.git/monikers-1/",
+    stopOnEntry = false,
+    runInTerminal = false,
+  },
+  {
+    name = "Launch syntect_server",
+    type = "lldb",
+    request = "launch",
+    program = "/home/david/sourcegraph/sourcegraph.git/scip-syntax-documents/docker-images/syntax-highlighter/target/debug/syntect_server",
+    args = {},
+    cwd = "/home/david/sourcegraph/sourcegraph.git/scip-syntax-documents/docker-images/syntax-highlighter/",
     stopOnEntry = false,
     runInTerminal = false,
   },
@@ -471,7 +428,6 @@ map("<F2>", require("dap").step_into, "step_into")
 map("<F3>", require("dap").step_over, "step_over")
 map("<F4>", require("dap").step_out, "step_out")
 map("<F5>", require("dap").continue, "continue")
-map("<leader>dt", require("dap-python").test_method, "test-method")
 
 -- TODO:
 -- disconnect vs. terminate
@@ -499,26 +455,46 @@ augroup END
 
 local dap_ui = require "dapui"
 
-
 local _ = dap_ui.setup {
   layouts = {
     {
       elements = {
-        'scopes',
-        'breakpoints',
-        'stacks',
-        'watches',
+        "scopes",
+        "breakpoints",
+        "stacks",
+        "watches",
       },
-      size=40,
-      position='left',
+      size = 40,
+      position = "left",
     },
-    elements = {
-      'repl',
-      'console',
+    {
+      elements = {
+        "repl",
+        "console",
+      },
+      size = 10,
+      position = "bottom",
     },
-    size=10,
-    position= 'bottom',
   },
+  -- -- You can change the order of elements in the sidebar
+  -- sidebar = {
+  --   elements = {
+  --     -- Provide as ID strings or tables with "id" and "size" keys
+  --     {
+  --       id = "scopes",
+  --       size = 0.75, -- Can be float or integer > 1
+  --     },
+  --     { id = "watches", size = 00.25 },
+  --   },
+  --   size = 50,
+  --   position = "left", -- Can be "left" or "right"
+  -- },
+  --
+  -- tray = {
+  --   elements = {},
+  --   size = 15,
+  --   position = "bottom", -- Can be "bottom" or "top"
+  -- },
 }
 
 local original = {}
@@ -568,13 +544,7 @@ dap.listeners.before.event_exited["dapui_config"] = function()
   dap_ui.close()
 end
 
---[[
-nnoremap <silent> <F10> :lua require'dap'.step_over()<CR>
-nnoremap <silent> <F12> :lua require'dap'.step_out()<CR>
-nnoremap <silent> <leader>B :lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>
-nnoremap <silent> <leader>lp :lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>
-nnoremap <silent> <leader>dl :lua require'dap'.repl.run_last()<CR>
---]]
-
--- vim.cmd [[nmap <silent> <space>db <Plug>VimspectorToggleBreakpoint]]
--- vim.cmd [[nmap <space>ds <Plug>VimscectorContinue]]
+local ok, dap_go = pcall(require, "dap-go")
+if ok then
+  dap_go.setup()
+end

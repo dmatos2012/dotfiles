@@ -674,6 +674,7 @@ let-env VISUAL = 'nvim'
 let-env BROWSER = 'firefox'
 let-env PYTHONSTARTUP = '/home/david/.pythonrc.py'
 let-env PIP_REQUIRE_VIRTUALENV = 1
+# let-env NVIM_APPNAME = LazyNvim
 
 # Custom functions
 #

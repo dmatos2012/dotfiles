@@ -1,8 +1,31 @@
 -- TODO: Need to add those sweet sweet lsp workspace diagnostic counts
+if not pcall(require, "el") then
+  -- TODO: Add in a nice default statusline here.
+  -- Would be good to research anyway for the course
+  return
+end
 
 RELOAD "el"
 require("el").reset_windows()
+
 vim.opt.laststatus = 3
+
+if false then
+  -- Disappearing statusline for commands
+  vim.opt.cmdheight = 0
+  vim.api.nvim_create_autocmd("ModeChanged", {
+    group = vim.api.nvim_create_augroup("StatusDisappear", { clear = true }),
+    callback = function()
+      if vim.v.event.new_mode == "c" then
+        vim.opt.laststatus = 0
+      elseif vim.v.event.old_mode == "c" then
+        vim.opt.laststatus = 3
+      end
+
+      pcall(vim.cmd, [[silent! redraw]])
+    end,
+  })
+end
 
 local builtin = require "el.builtin"
 local extensions = require "el.extensions"
@@ -104,7 +127,7 @@ require("el").setup {
       { " " },
       { sections.split, required = true },
       { git_icon },
-      { sections.maximum_width(builtin.make_responsive_file(140, 90), 0.40), required = true },
+      { sections.maximum_width(builtin.file_relative, 0.60), required = true },
       { sections.collapse_builtin { { " " }, { builtin.modified_flag } } },
       { sections.split, required = true },
       { diagnostic_display },
@@ -152,11 +175,15 @@ require("fidget").setup {
   align = {
     bottom = true,
   },
+  window = {
+    relative = "editor",
+  },
 }
 
 --[[
 let s:left_sep = ' ❯❯ '
 let s:right_sep = ' ❮❮ '
+
         let s:seperator.filenameright = ''
         let s:seperator.filesizeright = ''
         let s:seperator.gitleft = ''
