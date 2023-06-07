@@ -114,9 +114,9 @@ local filetype_attach = setmetatable({
     end)
   end,
 
-  python = function()
-    autocmd_format(false)
-  end,
+  -- python = function()
+  --   autocmd_format(false)
+  -- end,
 }, {
   __index = function()
     return function() end
@@ -449,17 +449,17 @@ end
 -- end
 --]]
 
-require("null-ls").setup {
-  sources = {
-    -- require("null-ls").builtins.formatting.stylua,
-    -- require("null-ls").builtins.diagnostics.eslint,
-    -- require("null-ls").builtins.completion.spell,
-    -- require("null-ls").builtins.diagnostics.selene,
-    require("null-ls").builtins.formatting.prettierd,
-    require("null-ls").builtins.formatting.isort,
-    require("null-ls").builtins.formatting.black,
-  },
-}
+-- require("null-ls").setup {
+--   sources = {
+--     -- require("null-ls").builtins.formatting.stylua,
+--     -- require("null-ls").builtins.diagnostics.eslint,
+--     -- require("null-ls").builtins.completion.spell,
+--     -- require("null-ls").builtins.diagnostics.selene,
+--     require("null-ls").builtins.formatting.prettierd,
+--     require("null-ls").builtins.formatting.isort,
+--     require("null-ls").builtins.formatting.black,
+--   },
+-- }
 
 local has_metals = pcall(require, "metals")
 if has_metals then

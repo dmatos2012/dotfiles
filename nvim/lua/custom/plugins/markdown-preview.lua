@@ -1,3 +1,10 @@
 return {
-  { "iamcco/markdown-preview.nvim", build = "cd app && yarn install" },
+  {
+    {
+      "iamcco/markdown-preview.nvim",
+      ft = "markdown",
+      -- build = "cd app && yarn install",
+      build = ":call mkdp#util#install()",
+    },
+  },
 }
