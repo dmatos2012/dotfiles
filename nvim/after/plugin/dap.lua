@@ -420,7 +420,7 @@ map("<leader><F5>", function()
     return
   end
 
-  R("tj.dap").select_rust_runnable()
+  R("david.dap").select_rust_runnable()
 end)
 
 map("<F1>", require("dap").step_back, "step_back")

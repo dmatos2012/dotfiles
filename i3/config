@@ -207,7 +207,7 @@ bindsym $mod+n exec nautilus --no-desktop --new-window
 
 # Switch my capslock for escape
 # exec --no-startup-id setxkbmap -option caps:swapescape
-exec --no-startup-id setxkbmap -option caps:escape
+exec_always --no-startup-id setxkbmap -option caps:escape
 
 # Assign workspaces
 assign [class="Slack"] $ws4
@@ -260,11 +260,16 @@ bindsym $mod+Shift+m exec "i3-msg move workspace to output right"
 exec --no-startup-id gnome-keyring-daemon --start --components=ssh
 
 # Add floating for notes/vim
-# bindsym $mod+BackSpace exec kitty -t "vim-float" -e "vim -c 'cd ~/work/vim'"for_window[title="^vim-float$"] floating enable resize set 500 400
-bindsym $mod+BackSpace exec kitty -T "vim-float"
-for_window [title="vim-float"] floating enable resize set 500 400
 # bindsym $mod+BackSpace exec kitty -T "vim-float"
+bindsym $mod+BackSpace exec $HOME/.config/i3/launch_nautilus.nu
+# for_window [title="vim-float"] floating enable resize set 500 400
 
+
+
+# Make nautilus floating
+# for_window [class="Org.gnome.Nautilus"] floating enable sticky enable
+# bindsym $mod+BackSpace exec --no-startup-id xdg-open .
+# for_window [class="Org.gnome.Nautilus"] floating enable resize set 500 400
 
 
 

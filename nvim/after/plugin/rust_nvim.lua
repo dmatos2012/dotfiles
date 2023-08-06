@@ -2,7 +2,7 @@ local has_rust_tools, rust_tools = pcall(require, "rust-tools")
 
 if not has_rust_tools then
 else
-  local lsp = require "tj.lsp"
+  local lsp = require "david.lsp"
   rust_tools.setup {
     tools = { -- rust-tools options
       -- Automatically set inlay hints (type hints)
