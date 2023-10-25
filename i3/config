@@ -55,7 +55,7 @@ tiling_drag modifier titlebar
 
 
 # start a terminal
-bindsym $mod+Return exec kitty
+bindsym $mod+Return exec kitty 
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -255,6 +255,9 @@ exec_always --no-startup-id autorandr --change
 
 # Move workspace to other monitor
 bindsym $mod+Shift+m exec "i3-msg move workspace to output right"
+
+# Start picom for transparency
+exec --no-startup-id picom -b
 
 #Hopefully this will work?
 exec --no-startup-id gnome-keyring-daemon --start --components=ssh

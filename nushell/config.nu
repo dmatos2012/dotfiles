@@ -678,13 +678,14 @@ $env.PIP_REQUIRE_VIRTUALENV = 1
 
 
 # Custom functions
-#
-#
-def docker_clean () {
+
+# Clean dangling docker images
+def docker-clean () {
     docker images -a --filter=dangling=true -q --no-trunc | lines | docker rmi $in -f
     docker ps --filter=status=exited --filter=status=created -q | lines | docker rm $in
 }
-def del-branches (
+# Delete local branches except specified
+def git-del-branches-except (
     excepts:list   # don't delete branch in the list
 ) {
     let branches = (git branch | lines | str trim)
@@ -697,6 +698,7 @@ def del-branches (
     }
 }
 
-def commits-since-creation (main: string, feature: string) {
+# Number commits since `feature_branch` was branched from `main`
+def git-commits-since-creation (feature: string, main: string) {
     git rev-list --count --first-parent $"($main)..($feature)"
 }

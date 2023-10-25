@@ -229,6 +229,10 @@ else
     cmd = rust_analyzer_cmd,
     settings = {
       ["rust-analyzer"] = {
+        -- enable code analysis behind feature flagg
+        cargo = { 
+          allFeatures = true, 
+        },
         checkOnSave = {
           command = "clippy",
         },

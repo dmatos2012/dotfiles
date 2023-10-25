@@ -17,6 +17,8 @@ return {
   { "nvim-lua/plenary.nvim", dev = false },
   { "tjdevries/colorbuddy.nvim", dev = false },
   { "tjdevries/gruvbuddy.nvim", dev = false },
+  { "Th3Whit3Wolf/onebuddy"},
+
   { "tjdevries/cyclist.vim" },
   { "tjdevries/express_line.nvim", dev = false },
   { "tjdevries/overlength.vim" },

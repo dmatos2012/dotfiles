@@ -8,7 +8,8 @@ if vim.env.USER == "tj-wsl" then
   rawset(require("colorbuddy").styles, "italic", require("colorbuddy").styles.none)
 end
 
-require("colorbuddy").colorscheme "gruvbuddy"
+require("colorbuddy").colorscheme ("gruvbuddy")
+-- require("colorbuddy").colorscheme("onebuddy", "light")
 require("colorizer").setup()
 
 local c = require("colorbuddy.color").colors
