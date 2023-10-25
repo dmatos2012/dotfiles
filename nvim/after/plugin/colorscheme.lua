@@ -2,77 +2,84 @@ if not pcall(require, "colorbuddy") then
   return
 end
 
+vim.opt.termguicolors = true
 
 if vim.env.USER == "tj-wsl" then
   rawset(require("colorbuddy").styles, "italic", require("colorbuddy").styles.none)
 end
 
-function useDarkTheme()
-  vim.opt.termguicolors = true
-  require("colorbuddy").colorscheme "gruvbuddy"
-  require("colorizer").setup()
+require("colorbuddy").colorscheme ("gruvbuddy")
+-- require("colorbuddy").colorscheme("onebuddy", "light")
+require("colorizer").setup()
 
-  local c = require("colorbuddy.color").colors
-  local Group = require("colorbuddy.group").Group
-  local g = require("colorbuddy.group").groups
-  local s = require("colorbuddy.style").styles
+local c = require("colorbuddy.color").colors
+local Group = require("colorbuddy.group").Group
+local g = require("colorbuddy.group").groups
+local s = require("colorbuddy.style").styles
 
-  Group.new("GoTestSuccess", c.green, nil, s.bold)
-  Group.new("GoTestFail", c.red, nil, s.bold)
+Group.new("@variable", c.superwhite, nil)
 
-  -- Group.new('Keyword', c.purple, nil, nil)
+Group.new("GoTestSuccess", c.green, nil, s.bold)
+Group.new("GoTestFail", c.red, nil, s.bold)
 
-  Group.new("TSPunctBracket", c.orange:light():light())
+-- Group.new('Keyword', c.purple, nil, nil)
 
-  Group.new("StatuslineError1", c.red:light():light(), g.Statusline)
-  Group.new("StatuslineError2", c.red:light(), g.Statusline)
-  Group.new("StatuslineError3", c.red, g.Statusline)
-  Group.new("StatuslineError3", c.red:dark(), g.Statusline)
-  Group.new("StatuslineError3", c.red:dark():dark(), g.Statusline)
+Group.new("TSPunctBracket", c.orange:light():light())
 
-  Group.new("pythonTSType", c.red)
-  Group.new("goTSType", g.Type.fg:dark(), nil, g.Type)
+Group.new("StatuslineError1", c.red:light():light(), g.Statusline)
+Group.new("StatuslineError2", c.red:light(), g.Statusline)
+Group.new("StatuslineError3", c.red, g.Statusline)
+Group.new("StatuslineError3", c.red:dark(), g.Statusline)
+Group.new("StatuslineError3", c.red:dark():dark(), g.Statusline)
 
-  Group.new("typescriptTSConstructor", g.pythonTSType)
-  Group.new("typescriptTSProperty", c.blue)
+Group.new("pythonTSType", c.red)
+Group.new("goTSType", g.Type.fg:dark(), nil, g.Type)
 
-  -- vim.cmd [[highlight WinSeparator guifg=#4e545c guibg=None]]
-  Group.new("WinSeparator", nil, nil)
+Group.new("typescriptTSConstructor", g.pythonTSType)
+Group.new("typescriptTSProperty", c.blue)
 
-  -- I don't think I like highlights for text
-  -- Group.new("LspReferenceText", nil, c.gray0:light(), s.bold)
-  -- Group.new("LspReferenceWrite", nil, c.gray0:light())
+-- vim.cmd [[highlight WinSeparator guifg=#4e545c guibg=None]]
+Group.new("WinSeparator", nil, nil)
 
-  -- Group.new("TSKeyword", c.purple, nil, s.underline, c.blue)
-  -- Group.new("LuaFunctionCall", c.green, nil, s.underline + s.nocombine, g.TSKeyword.guisp)
+-- I don't think I like highlights for text
+-- Group.new("LspReferenceText", nil, c.gray0:light(), s.bold)
+-- Group.new("LspReferenceWrite", nil, c.gray0:light())
 
-  Group.new("TSTitle", c.blue)
+-- Group.new("TSKeyword", c.purple, nil, s.underline, c.blue)
+-- Group.new("LuaFunctionCall", c.green, nil, s.underline + s.nocombine, g.TSKeyword.guisp)
 
-  -- TODO: It would be nice if we could only highlight
-  -- the text with characters or something like that...
-  -- but we'll have to stick to that for later.
-  Group.new("InjectedLanguage", nil, g.Normal.bg:dark())
+Group.new("TSTitle", c.blue)
 
-  Group.new("LspParameter", nil, nil, s.italic)
-  Group.new("LspDeprecated", nil, nil, s.strikethrough)
-end
+-- TODO: It would be nice if we could only highlight
+-- the text with characters or something like that...
+-- but we'll have to stick to that for later.
+Group.new("InjectedLanguage", nil, g.Normal.bg:dark())
 
-function TestHighlightCommandsTheme()
-  require('colorbuddy').colorscheme('snazzybuddy')
-  vim.cmd[[highlight Normal cterm=NONE ctermbg=17 gui=NONE guibg=#eff0eb]]
-  vim.cmd[[highlight NonText cterm=NONE ctermbg=17 gui=NONE guibg=#eff0eb]]
-  vim.cmd[[highlight CursorLine cterm=NONE ctermbg=17 gui=NONE guibg=#eff0eb]]
-  vim.cmd[[highlight StatusLine cterm=NONE ctermbg=231 ctermfg=160 gui=NONE guibg=#ffffff guifg=#d70000]]
-  vim.cmd[[highlight MsgArea guibg=#eff0eb guifg=#ff5c57]]
-  -- require('snazzybuddy').reload()
-end
+Group.new("LspParameter", nil, nil, s.italic)
+Group.new("LspDeprecated", nil, nil, s.strikethrough)
+Group.new("@function.bracket", g.Normal, g.Normal)
+Group.new("@variable.builtin", c.purple:light():light(), g.Normal)
 
-function useLightTheme()
-  require('colorbuddy').colorscheme('snazzybuddy')
-  vim.g.background='light'
-  require('snazzybuddy').reload()
-  vim.cmd[[highlight Normal cterm=NONE ctermbg=17 gui=NONE guibg=#eff0eb]]
-end
+-- Group.new("VirtNonText", c.yellow:light():light(), nil, s.italic)
+Group.new("VirtNonText", c.gray3:dark(), nil, s.italic)
 
-useDarkTheme()
--- useLightTheme()
+Group.new("TreesitterContext", nil, g.Normal.bg:light())
+Group.new("TreesitterContextLineNumber", c.blue)
+-- hi TreesitterContextBottom gui=underline guisp=Grey
+-- Group.new("TreesitterContextBottom", nil, nil, s.underline)
+
+Group.new("@property", c.blue)
+Group.new("@punctuation.bracket.rapper", c.gray3, nil, s.none)
+Group.new("@rapper_argument", c.red, nil, s.italic)
+Group.new("@rapper_return", c.orange:light(), nil, s.italic)
+
+-- Group.new("@function.call.lua"
+vim.cmd [[highlight link @function.call.lua LuaFunctionCall]]
+vim.cmd [[
+  hi link @lsp.type.variable.lua variable
+  hi link @lsp.type.variable.ocaml variable
+  hi link @lsp.type.variable.rust variable
+  hi link @lsp.type.namespace @namespace
+  hi link @punctuation.bracket.rapper @text.literal
+  hi link @normal Normal
+]]

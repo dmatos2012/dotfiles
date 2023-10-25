@@ -6,6 +6,7 @@ setlocal tabstop=4
 
 nnoremap <buffer><silent> <space>pb :!black %<CR>
 nnoremap <buffer><silent> <space>pf :!flake8 %<CR>
+nnoremap <buffer><silent> <space>ps <cmd>Pytest session<CR>
 " augroup run_flake8
 "     au!
 "     autocmd BufWritePost *.py black

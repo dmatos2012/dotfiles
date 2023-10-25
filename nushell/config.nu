@@ -297,7 +297,7 @@ let light_theme = {
 
 
 # The default config record. This is where much of your global configuration is setup.
-let-env config = {
+$env.config = {
   ls: {
     use_ls_colors: true # use the LS_COLORS environment variable to colorize output
     clickable_links: true # enable or disable clickable links. Your terminal has to support links.
@@ -669,20 +669,23 @@ alias xo = xdg-open
 alias gl = git log --oneline
 
 # ENV VARS
-let-env EDITOR = 'nvim'
-let-env VISUAL = 'nvim'
-let-env BROWSER = 'firefox'
-let-env PYTHONSTARTUP = '/home/david/.pythonrc.py'
-let-env PIP_REQUIRE_VIRTUALENV = 1
+$env.EDITOR = 'nvim'
+$env.VISUAL = 'nvim'
+$env.BROWSER = 'firefox'
+$env.PYTHONSTARTUP = '/home/david/.pythonrc.py'
+$env.PIP_REQUIRE_VIRTUALENV = 1
+# $env.NVIM_APPNAME = LazyNvim
+
 
 # Custom functions
-#
-#
-def docker_clean () {
+
+# Clean dangling docker images
+def docker-clean () {
     docker images -a --filter=dangling=true -q --no-trunc | lines | docker rmi $in -f
     docker ps --filter=status=exited --filter=status=created -q | lines | docker rm $in
 }
-def del-branches (
+# Delete local branches except specified
+def git-del-branches-except (
     excepts:list   # don't delete branch in the list
 ) {
     let branches = (git branch | lines | str trim)
@@ -695,6 +698,7 @@ def del-branches (
     }
 }
 
-def commits-since-creation (main: string, feature: string) {
+# Number commits since `feature_branch` was branched from `main`
+def git-commits-since-creation (feature: string, main: string) {
     git rev-list --count --first-parent $"($main)..($feature)"
 }

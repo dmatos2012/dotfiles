@@ -23,7 +23,12 @@ if not ok then
   return
 end
 
-lspkind.init()
+lspkind.init {
+  symbol_map = {
+    Copilot = "",
+  },
+}
+vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#6CC644" })
 
 local cmp = require "cmp"
 
@@ -38,6 +43,13 @@ cmp.setup {
       cmp.mapping.confirm {
         behavior = cmp.ConfirmBehavior.Insert,
         select = true,
+      },
+      { "i", "c" }
+    ),
+    ["<M-y>"] = cmp.mapping(
+      cmp.mapping.confirm {
+        behavior = cmp.ConfirmBehavior.Replace,
+        select = false,
       },
       { "i", "c" }
     ),
@@ -70,7 +82,7 @@ cmp.setup {
     -- Testing
     ["<c-q>"] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
+      select = false,
     },
 
     -- If you want tab completion :'(
@@ -99,17 +111,18 @@ cmp.setup {
   --        priority
   --        max_item_count
   --        (more?)
-  sources = {
-    { name = "gh_issues" },
-
-    -- Youtube: Could enable this only for lua, but nvim_lua handles that already.
+  sources = cmp.config.sources({
     { name = "nvim_lua" },
-
     { name = "nvim_lsp" },
-    { name = "path" },
     { name = "luasnip" },
+    -- { name = "copilot" },
+    -- { name = "eruby" },
+  }, {
+    { name = "path" },
     { name = "buffer", keyword_length = 5 },
-  },
+  }, {
+    -- { name = "gh_issues" },
+  }),
 
   sorting = {
     -- TODO: Would be cool to add stuff like "See variable names before method names" in rust, or something like that.
@@ -158,6 +171,7 @@ cmp.setup {
         luasnip = "[snip]",
         gh_issues = "[issues]",
         tn = "[TabNine]",
+        eruby = "[erb]",
       },
     },
   },

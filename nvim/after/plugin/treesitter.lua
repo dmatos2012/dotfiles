@@ -2,26 +2,40 @@ if not pcall(require, "nvim-treesitter") then
   return
 end
 
-local ts_debugging = false
-if ts_debugging then
-  RELOAD "nvim-treesitter"
-end
-
 local list = require("nvim-treesitter.parsers").get_parser_configs()
-
-
--- list.lua = nil
-
--- :h nvim-treesitter-query-extensions
--- This isnt working because Tree-sitter-lua or tjdevries git repo is old
--- The TS highlight groups are deprecated..fix later?
-local custom_captures = {
-  -- ["function.call.lua"] = "LuaFunctionCall",
-  ["function.bracket"] = "Type",
-  ["namespace.type"] = "TSNamespaceType",
+list.lua = {
+  install_info = {
+    url = "https://github.com/tjdevries/tree-sitter-lua",
+    revision = "0e860f697901c9b610104eb61d3812755d5211fc",
+    files = { "src/parser.c", "src/scanner.c" },
+    branch = "master",
+  },
 }
-
--- require("nvim-treesitter.highlight").set_custom_captures(custom_captures)
+list.rsx = {
+  install_info = {
+    url = "https://github.com/tjdevries/tree-sitter-rsx",
+    files = { "src/parser.c", "src/scanner.cc" },
+    branch = "master",
+  },
+}
+list.perl = {
+  install_info = {
+    url = "https://github.com/tree-sitter-perl/tree-sitter-perl",
+    -- revision = "release",
+    branch = "master",
+    files = { "src/parser.c", "src/scanner.c" },
+    requires_generate_from_grammar = true,
+  },
+}
+list.just = {
+  install_info = {
+    url = "https://github.com/IndianBoy42/tree-sitter-just", -- local path or git repo
+    files = { "src/parser.c", "src/scanner.cc" },
+    branch = "main",
+    -- use_makefile = true -- this may be necessary on MacOS (try if you see compiler errors)
+  },
+  maintainers = { "@IndianBoy42" },
+}
 
 -- alt+<space>, alt+p -> swap next
 -- alt+<backspace>, alt+p -> swap previous
@@ -38,7 +52,6 @@ local swap_next, swap_prev = (function()
     -- Not ready, but I think it's my fault :)
     -- v = "@variable",
   }
-
   local n, p = {}, {}
   for key, obj in pairs(swap_objects) do
     n[string.format("<C-Space><C-%s>", key)] = obj
@@ -51,6 +64,11 @@ end)()
 local _ = require("nvim-treesitter.configs").setup {
   ensure_installed = {
     "html",
+    "javascript",
+    "typescript",
+    "tsx",
+    "json",
+    "vim",
     "markdown",
     "python",
     "rust",
@@ -60,9 +78,9 @@ local _ = require("nvim-treesitter.configs").setup {
 
   highlight = {
     enable = true,
-    use_languagetree = false,
+    -- use_languagetree = false,
     -- disable = { "json" },
-    custom_captures = custom_captures,
+    -- custom_captures = custom_captures,
   },
 
   refactor = {
@@ -136,6 +154,7 @@ local _ = require("nvim-treesitter.configs").setup {
 
     select = {
       enable = true,
+      lookahead = true,
       keymaps = {
         ["af"] = "@function.outer",
         ["if"] = "@function.inner",
@@ -178,6 +197,9 @@ local _ = require("nvim-treesitter.configs").setup {
     },
   },
 }
+
+require("treesitter-context").setup { enable = true }
+vim.treesitter.query.set("lua", "context", "")
 
 local read_query = function(filename)
   return table.concat(vim.fn.readfile(vim.fn.expand(filename)), "\n")

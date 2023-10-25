@@ -1,18 +1,9 @@
---[[
-TODO:
-- do the thing with auto picking shorter results if possible for conni
-- I wanna add something that gives a little minus points for certain pattern
-  - scratch files get mins -0.001
---]]
-
 SHOULD_RELOAD_TELESCOPE = true
-
 local reloader = function()
   if SHOULD_RELOAD_TELESCOPE then
-    RELOAD "plenary"
-    RELOAD "telescope"
-    RELOAD "david.telescope.setup"
-    RELOAD "david.telescope.custom"
+    R "plenary"
+    R "telescope"
+    R "david.telescope.setup"
   end
 end
 
@@ -33,10 +24,6 @@ local _ = pcall(require, "nvim-nonicons")
 
 local M = {}
 
---[[
-lua require('plenary.reload').reload_module("my_user.tele")
-nnoremap <leader>en <cmd>lua require('my_user.tele').edit_neovim()<CR>
---]]
 function M.edit_neovim()
   local opts_with_preview, opts_without_preview
 
@@ -176,19 +163,24 @@ function M.edit_zsh()
   }
 end
 
-function M.fd()
-  local opts = themes.get_ivy {
-    hidden = false,
-    sorting_strategy = "ascending",
-    layout_config = { --[[ height = 9  ]]
+function M.find_files()
+  -- local opts = themes.get_ivy {
+  --   hidden = false,
+  --   sorting_strategy = "ascending",
+  --   layout_config = { height = 9 },
+  -- }
+  require("telescope.builtin").find_files {
+    sorting_strategy = "descending",
+    scroll_strategy = "cycle",
+    layout_config = {
+      -- height = 10,
     },
   }
-  require("telescope.builtin").fd(opts)
 end
 
 function M.fs()
   local opts = themes.get_ivy { hidden = false, sorting_strategy = "descending" }
-  require("telescope.builtin").fd(opts)
+  require("telescope.builtin").find_files(opts)
 end
 
 function M.builtin()
@@ -201,7 +193,7 @@ function M.git_files()
     path = nil
   end
 
-  local width = 0.25
+  local width = 0.75
   if path and string.find(path, "sourcegraph.*sourcegraph", 1, false) then
     width = 0.5
   end
@@ -283,7 +275,7 @@ end
 
 function M.installed_plugins()
   require("telescope.builtin").find_files {
-    cwd = vim.fn.stdpath "data" .. "/site/pack/packer/start/",
+    cwd = vim.fn.stdpath "data" .. "/lazy/",
   }
 end
 

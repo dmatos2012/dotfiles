@@ -3,42 +3,6 @@ local dap = require "dap"
 
 local M = {}
 
---[[
-|| {
-||   args = {
-||     cargoArgs = { "test", "--package", "dap-tester", "--bin", "dap-tester" },
-||     cargoExtraArgs = {},
-||     executableArgs = { "test::can_i_debug_this", "--exact", "--nocapture" },
-||     workspaceRoot = "/home/tjdevries/tmp/dap-tester"
-||   },
-||   kind = "cargo",
-||   label = "test test::can_i_debug_this",
-||   location = {
-||     targetRange = {
-||       end = {
-||         character = 5,
-||         line = 22
-||       },
-||       start = {
-||         character = 4,
-||         line = 14
-||       }
-||     },
-||     targetSelectionRange = {
-||       end = {
-||         character = 23,
-||         line = 15
-||       },
-||       start = {
-||         character = 7,
-||         line = 15
-||       }
-||     },
-||     targetUri = "file:///home/tjdevries/tmp/dap-tester/src/main.rs"
-||   }
-|| }
---]]
-
 local get_cargo_args = function(args)
   local result = {}
 
@@ -105,39 +69,35 @@ M.debug_rust_runnable = function(item)
 
   vim.notify("Debugging: " .. item.label)
 
-  Job
-    :new({
-      command = "cargo",
-      args = get_cargo_args(item.args),
-      cwd = item.args.workspaceRoot,
-      on_exit = function(j, code)
-        if code and code > 0 then
-          vim.notify "An error occured while compiling. Please fix all compilation issues and try again."
-        end
+  Job:new({
+    command = "cargo",
+    args = get_cargo_args(item.args),
+    cwd = item.args.workspaceRoot,
+    on_exit = function(j, code)
+      if code and code > 0 then
+        vim.notify "An error occured while compiling. Please fix all compilation issues and try again."
+      end
 
-        vim.schedule(function()
-          for _, value in pairs(j:result()) do
-            local json = vim.fn.json_decode(value)
-            if type(json) == "table" and json.executable ~= vim.NIL and json.executable ~= nil then
-              local dap_config = {
-                name = "Rust tools debug",
-                type = "rt_lldb",
-                request = "launch",
-                program = json.executable,
-                args = item.args.executableArgs,
-                cwd = item.workspaceRoot,
-                stopOnEntry = false,
-                runInTerminal = false,
-              }
-
-              dap.run(dap_config)
-              break
-            end
+      vim.schedule(function()
+        for _, value in pairs(j:result()) do
+          local json = vim.fn.json_decode(value)
+          if type(json) == "table" and json.executable ~= vim.NIL and json.executable ~= nil then
+            dap.run {
+              name = "Rust tools debug",
+              type = "rt_lldb",
+              request = "launch",
+              program = json.executable,
+              args = item.args.executableArgs,
+              cwd = item.workspaceRoot,
+              stopOnEntry = false,
+              runInTerminal = false,
+            }
+            break
           end
-        end)
-      end,
-    })
-    :start()
+        end
+      end)
+    end,
+  }):start()
 end
 
 return M

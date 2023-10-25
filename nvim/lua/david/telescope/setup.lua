@@ -1,3 +1,7 @@
+if not pcall(require, "telescope") then
+  return
+end
+
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local action_layout = require "telescope.actions.layout"
@@ -13,10 +17,12 @@ end
 
 require("telescope").setup {
   defaults = {
-    prompt_prefix = "❯ ",
-    selection_caret = "❯ ",
-    entry_prefix = " ",
+    prompt_prefix = "> ",
+    selection_caret = "> ",
+    entry_prefix = "  ",
     multi_icon = "<>",
+
+    -- path_display = "truncate",
 
     winblend = 0,
 
@@ -57,6 +63,11 @@ require("telescope").setup {
 
     mappings = {
       i = {
+        ["<RightMouse>"] = actions.close,
+        ["<LeftMouse>"] = actions.select_default,
+        ["<ScrollWheelDown>"] = actions.move_selection_next,
+        ["<ScrollWheelUp>"] = actions.move_selection_previous,
+
         ["<C-x>"] = false,
         ["<C-s>"] = actions.select_horizontal,
         ["<C-n>"] = "move_selection_next",
@@ -81,18 +92,19 @@ require("telescope").setup {
         ["<c-g>s"] = actions.select_all,
         ["<c-g>a"] = actions.add_selection,
 
-        ["<c-space>"] = function(prompt_bufnr)
-          local opts = {
-            callback = actions.toggle_selection,
-            loop_callback = actions.send_selected_to_qflist,
-          }
-          require("telescope").extensions.hop._hop_loop(prompt_bufnr, opts)
-        end,
+        -- ["<c-space>"] = function(prompt_bufnr)
+        --   local opts = {
+        --     callback = actions.toggle_selection,
+        --     loop_callback = actions.send_selected_to_qflist,
+        --   }
+        --   require("telescope").extensions.hop._hop_loop(prompt_bufnr, opts)
+        -- end,
 
         ["<C-w>"] = function()
           vim.api.nvim_input "<c-s-w>"
         end,
       },
+
       n = {
         ["<C-e>"] = actions.results_scrolling_down,
         ["<C-y>"] = actions.results_scrolling_up,
@@ -113,7 +125,10 @@ require("telescope").setup {
   },
 
   pickers = {
-    fd = {
+    find_files = {
+      -- I don't like having the cwd prefix in my files
+      find_command = vim.fn.executable "fdfind" == 1 and { "fdfind", "--strip-cwd-prefix", "--type", "f" } or nil,
+
       mappings = {
         n = {
           ["kj"] = "close",
@@ -127,6 +142,11 @@ require("telescope").setup {
           ["<C-a>"] = false,
         },
       },
+    },
+
+    buffers = {
+      sort_lastused = true,
+      sort_mru = true,
     },
   },
 
@@ -188,8 +208,9 @@ _ = require("telescope").load_extension "ui-select"
 _ = require("telescope").load_extension "fzf"
 _ = require("telescope").load_extension "git_worktree"
 _ = require("telescope").load_extension "neoclip"
-_ = require("telescope").load_extension "frecency"
-_ = require("telescope").load_extension "smart_history"
+
+pcall(require("telescope").load_extension, "smart_history")
+pcall(require("telescope").load_extension, "frecency")
 
 if vim.fn.executable "gh" == 1 then
   pcall(require("telescope").load_extension, "gh")
