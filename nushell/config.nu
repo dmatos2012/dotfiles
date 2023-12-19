@@ -305,9 +305,6 @@ $env.config = {
   rm: {
     always_trash: false # always act as if -t was given. Can be overridden with -p
   }
-  cd: {
-    abbreviations: false # allows `cd s/o/f` to expand to `cd some/other/folder`
-  }
   table: {
     mode: rounded # basic, compact, compact_double, light, thin, with_love, rounded, reinforced, heavy, none, other
     index_mode: always # "always" show indexes, "never" show indexes, "auto" = show indexes when a table has "index" column
@@ -657,7 +654,7 @@ $env.config = {
   ]
 }
 #Source starship
-source ~/.cache/starship/init.nu
+# source ~/.cache/starship/init.nu
 
 #Source atuin
 source ~/.local/share/atuin/init.nu
@@ -666,7 +663,10 @@ source ~/.local/share/atuin/init.nu
 alias gs = git status
 alias gc = git checkout
 alias xo = xdg-open
-alias gl = git log --oneline
+# alias gl = git log --oneline
+alias gl = git lg
+alias ssh = kitty +kitten ssh
+alias avt = aws-vault exec visiontrack --
 
 # ENV VARS
 $env.EDITOR = 'nvim'

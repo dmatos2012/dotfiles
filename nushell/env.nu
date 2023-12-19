@@ -3,30 +3,35 @@
 # version = "0.85.1"
 
 def create_left_prompt [] {
-    let home =  $nu.home-path
-
-    # Perform tilde substitution on dir
-    # To determine if the prefix of the path matches the home dir, we split the current path into
-    # segments, and compare those with the segments of the home dir. In cases where the current dir
-    # is a parent of the home dir (e.g. `/home`, homedir is `/home/user`), this comparison will 
-    # also evaluate to true. Inside the condition, we attempt to str replace `$home` with `~`.
-    # Inside the condition, either:
-    # 1. The home prefix will be replaced
-    # 2. The current dir is a parent of the home dir, so it will be uneffected by the str replace
-    let dir = (
-        if ($env.PWD | path split | zip ($home | path split) | all { $in.0 == $in.1 }) {
-            ($env.PWD | str replace $home "~")
-        } else {
-            $env.PWD
-        }
-    )
-
-    let path_color = (if (is-admin) { ansi red_bold } else { ansi green_bold })
-    let separator_color = (if (is-admin) { ansi light_red_bold } else { ansi light_green_bold })
-    let path_segment = $"($path_color)($dir)"
-
-    $path_segment | str replace --all (char path_sep) $"($separator_color)(char path_sep)($path_color)"
+    ^starship prompt --cmd-duration $env.CMD_DURATION_MS $'--status=($env.LAST_EXIT_CODE)'
 }
+
+
+# def create_left_prompt [] {
+#     let home =  $nu.home-path
+#
+#     # Perform tilde substitution on dir
+#     # To determine if the prefix of the path matches the home dir, we split the current path into
+#     # segments, and compare those with the segments of the home dir. In cases where the current dir
+#     # is a parent of the home dir (e.g. `/home`, homedir is `/home/user`), this comparison will 
+#     # also evaluate to true. Inside the condition, we attempt to str replace `$home` with `~`.
+#     # Inside the condition, either:
+#     # 1. The home prefix will be replaced
+#     # 2. The current dir is a parent of the home dir, so it will be uneffected by the str replace
+#     let dir = (
+#         if ($env.PWD | path split | zip ($home | path split) | all { $in.0 == $in.1 }) {
+#             ($env.PWD | str replace $home "~")
+#         } else {
+#             $env.PWD
+#         }
+#     )
+#
+#     let path_color = (if (is-admin) { ansi red_bold } else { ansi green_bold })
+#     let separator_color = (if (is-admin) { ansi light_red_bold } else { ansi light_green_bold })
+#     let path_segment = $"($path_color)($dir)"
+#
+#     $path_segment | str replace --all (char path_sep) $"($separator_color)(char path_sep)($path_color)"
+# }
 
 def create_right_prompt [] {
     # create a right prompt in magenta with green separators and am/pm underlined

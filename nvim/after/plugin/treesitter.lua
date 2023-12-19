@@ -11,6 +11,14 @@ list.lua = {
     branch = "master",
   },
 }
+list.nu = {
+  install_info = {
+    url = "https://github.com/nushell/tree-sitter-nu",
+    files = { "src/parser.c" },
+    branch = "main",
+  },
+  filetype = "nu",
+}
 list.rsx = {
   install_info = {
     url = "https://github.com/tjdevries/tree-sitter-rsx",
