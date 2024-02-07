@@ -681,8 +681,13 @@ $env.PIP_REQUIRE_VIRTUALENV = 1
 
 # Clean dangling docker images
 def docker-clean () {
-    docker images -a --filter=dangling=true -q --no-trunc | lines | docker rmi $in -f
-    docker ps --filter=status=exited --filter=status=created -q | lines | docker rm $in
+
+    let dangling_images = docker images -a --filter=dangling=true -q --no-trunc | lines;
+    let is_empty = $dangling_images | is-empty;
+    if not $is_empty {
+        $dangling_images | docker rmi ...$in -f
+        docker ps --filter=status=exited --filter=status=created -q | lines | docker rm ...$in
+    }
 }
 # Delete local branches except specified
 def git-del-branches-except (

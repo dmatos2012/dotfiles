@@ -102,17 +102,17 @@ local filetype_attach = setmetatable({
     autocmd_format(false)
   end,
 
-  typescript = function()
-    autocmd_format(false, function(client)
-      return client.name ~= "tsserver"
-    end)
-  end,
+  -- typescript = function()
+  --   autocmd_format(false, function(client)
+  --     return client.name ~= "tsserver"
+  --   end)
+  -- end,
 
-  javascript = function()
-    autocmd_format(false, function(client)
-      return client.name ~= "tsserver"
-    end)
-  end,
+  -- javascript = function()
+  --   autocmd_format(false, function(client)
+  --     return client.name ~= "tsserver"
+  --   end)
+  -- end,
 
   -- python = function()
   --   autocmd_format(false)
@@ -229,9 +229,21 @@ else
     cmd = rust_analyzer_cmd,
     settings = {
       ["rust-analyzer"] = {
+        imports = {
+          granularity = {
+            group = "module",
+          },
+          prefix = "self",
+        },
         -- enable code analysis behind feature flagg
         cargo = { 
-          allFeatures = true, 
+          buildScripts = {
+            enable = true,
+          },
+          -- allFeatures = true, 
+        },
+        procMacro = {
+          enable = true
         },
         checkOnSave = {
           command = "clippy",
@@ -249,7 +261,22 @@ local servers = {
   eslint = true,
   gdscript = true,
   -- graphql = true,
-  html = true,
+  -- html = true,
+  html = {
+    cmd = { "vscode-html-language-server", "--stdio" },
+    capabilities = updated_capabilities,
+    filetypes = {"html"},
+    single_file_support = true,
+    init_options = {
+      configurationSection = { "html", "css", "javascript" },
+        embeddedLanguages = {
+          css = true,
+          javascript = true
+        },
+        provideFormatter = true
+
+    }
+  },
   pylsp = true,
   vimls = true,
   yamlls = true,
@@ -339,25 +366,25 @@ local servers = {
   cssls = true,
   perlnavigator = true,
 
-  tsserver = {
-    init_options = ts_util.init_options,
-    cmd = { "typescript-language-server", "--stdio" },
-    filetypes = {
-      "javascript",
-      "javascriptreact",
-      "javascript.jsx",
-      "typescript",
-      "typescriptreact",
-      "typescript.tsx",
-    },
-
-    on_attach = function(client)
-      custom_attach(client)
-
-      ts_util.setup { auto_inlay_hints = false }
-      ts_util.setup_client(client)
-    end,
-  },
+  -- tsserver = {
+  --   init_options = ts_util.init_options,
+  --   cmd = { "typescript-language-server", "--stdio" },
+  --   filetypes = {
+  --     "javascript",
+  --     "javascriptreact",
+  --     "javascript.jsx",
+  --     "typescript",
+  --     "typescriptreact",
+  --     "typescript.tsx",
+  --   },
+  --
+  --   on_attach = function(client)
+  --     custom_attach(client)
+  --
+  --     ts_util.setup { auto_inlay_hints = false }
+  --     ts_util.setup_client(client)
+  --   end,
+  -- },
 }
 
 if vim.fn.executable "llmsp" == 1 and vim.env.SRC_ACCESS_TOKEN then

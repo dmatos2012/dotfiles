@@ -121,5 +121,5 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.deno/bin'
 
 # Initialize atuin. Comment when problems happen with atuin as well
 # atuin init nu --disable-up-arrow | save -f ~/.local/share/atuin/init.nu
-# atuin init nu | save -f ~/.local/share/atuin/init.nu
+atuin init nu | save -f ~/.local/share/atuin/init.nu
 
