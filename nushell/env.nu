@@ -38,7 +38,7 @@ def create_right_prompt [] {
     let time_segment = ([
         (ansi reset)
         (ansi magenta)
-        (date now | format date '%x %X %p') # try to respect user's locale
+        (date now | format date '%x %X') # try to respect user's locale
     ] | str join | str replace --regex --all "([/:])" $"(ansi green)${1}(ansi magenta)" |
         str replace --regex --all "([AP]M)" $"(ansi magenta_underline)${1}")
 
@@ -114,6 +114,11 @@ $env.NU_PLUGIN_DIRS = [
 # Add deno to path(For peek.nvim)
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.deno/bin')
 
+# Add fzf to path
+
+$env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.fzf/bin')
+
+
 
 #Initialize starship. Comment when problems happen with starship
 # mkdir ~/.cache/starship
@@ -121,5 +126,7 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.deno/bin'
 
 # Initialize atuin. Comment when problems happen with atuin as well
 # atuin init nu --disable-up-arrow | save -f ~/.local/share/atuin/init.nu
-atuin init nu | save -f ~/.local/share/atuin/init.nu
+# atuin init nu | save -f ~/.local/share/atuin/init.nu
+# zoxide init nushell | str replace --all "def-env" "def --env" | save -f ~/.zoxide.nu
+
 

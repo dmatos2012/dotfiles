@@ -542,6 +542,26 @@ $env.config = {
             | each { |it| {value: $it.name description: $it.usage} }
         }
       }
+      {
+        name: fzf_dir_menu_nu_ui
+        only_buffer_difference: true
+        marker: "# "
+        type: {
+            layout: list
+            page_size: 10
+        }
+        style: {
+            text: "#66ff66"
+            selected_text: { fg: "#66ff66" attr: r }
+            description_text: yellow
+        }
+        source: { |buffer, position|
+            ls $env.PWD | where type == dir
+            | sort-by name | get name | to text
+            | fzf -f $buffer
+            | each { |v| { value: ($v | str trim) }}
+        }
+       }
   ]
   keybindings: [
     {
@@ -556,6 +576,25 @@ $env.config = {
         ]
       }
     }
+    {
+      name: fzf_dir_menu_nu_ui
+      # modifier: shift
+      modifier: control
+      keycode: char_n
+      mode: [emacs, vi_normal, vi_insert]
+      event: { send: menu name: fzf_dir_menu_nu_ui }
+    }
+  {
+    name: change_dir_with_fzf
+    # modifier: shift
+    modifier: control
+    keycode: char_f
+    mode: [emacs, vi_normal, vi_insert]
+    event: {
+      send: executehostcommand,
+      cmd: "cd (ls | where type == dir | each { |it| $it.name} | str join (char nl) | fzf | decode utf-8 | str trim)"
+    }
+  }
     {
       name: completion_previous
       modifier: shift
@@ -657,7 +696,11 @@ $env.config = {
 # source ~/.cache/starship/init.nu
 
 #Source atuin
+
 source ~/.local/share/atuin/init.nu
+
+# Source zoxide
+source ~/.zoxide.nu
 
 # Aliases
 alias gs = git status
@@ -667,6 +710,8 @@ alias xo = xdg-open
 alias gl = git lg
 alias ssh = kitty +kitten ssh
 alias avt = aws-vault exec visiontrack --
+alias cwork = cd ~/Documents/projects/
+alias coss = cd ~/Documents/oss
 
 # ENV VARS
 $env.EDITOR = 'nvim'
