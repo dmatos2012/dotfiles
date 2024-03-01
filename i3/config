@@ -274,5 +274,8 @@ bindsym $mod+BackSpace exec $HOME/.config/i3/launch_nautilus.nu
 # bindsym $mod+BackSpace exec --no-startup-id xdg-open .
 # for_window [class="Org.gnome.Nautilus"] floating enable resize set 500 400
 
+# Make gparted able to be started
+for_window [class="GParted"] floating enable border normal
+
 
 

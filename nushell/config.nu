@@ -702,6 +702,9 @@ source ~/.local/share/atuin/init.nu
 # Source zoxide
 source ~/.zoxide.nu
 
+# Source carapace
+source ~/.cache/carapace/init.nu
+
 # Aliases
 alias gs = git status
 alias gc = git checkout
@@ -709,15 +712,11 @@ alias xo = xdg-open
 # alias gl = git log --oneline
 alias gl = git lg
 alias ssh = kitty +kitten ssh
-alias avt = aws-vault exec visiontrack --
-alias cwork = cd ~/Documents/projects/
-alias coss = cd ~/Documents/oss
 
 # ENV VARS
 $env.EDITOR = 'nvim'
 $env.VISUAL = 'nvim'
 $env.BROWSER = 'firefox'
-$env.PYTHONSTARTUP = '/home/david/.pythonrc.py'
 $env.PIP_REQUIRE_VIRTUALENV = 1
 # $env.NVIM_APPNAME = LazyNvim
 

@@ -120,6 +120,7 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.fzf/bin')
 
 
 
+
 #Initialize starship. Comment when problems happen with starship
 # mkdir ~/.cache/starship
 # starship init nu | save -f ~/.cache/starship/init.nu
@@ -128,5 +129,9 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.fzf/bin')
 # atuin init nu --disable-up-arrow | save -f ~/.local/share/atuin/init.nu
 # atuin init nu | save -f ~/.local/share/atuin/init.nu
 # zoxide init nushell | str replace --all "def-env" "def --env" | save -f ~/.zoxide.nu
+
+# Initialize carapace for completions
+mkdir ~/.cache/carapace
+carapace _carapace nushell | save --force ~/.cache/carapace/init.nu
 
 
