@@ -697,6 +697,7 @@ $env.config = {
 
 #Source atuin
 
+# pause to see if this is cause of my slowdown
 source ~/.local/share/atuin/init.nu
 
 # Source zoxide
@@ -747,7 +748,7 @@ def git-del-branches-except (
     }
 }
 
-# Number commits since `feature_branch` was branched from `main`
-def git-commits-since-creation (feature: string, main: string) {
-    git rev-list --count --first-parent $"($main)..($feature)"
+# Number commits since `HEAD` was branched from `main`
+def git-commits-since-creation (main: string) {
+    git rev-list --count --first-parent $"($main)..HEAD"
 }

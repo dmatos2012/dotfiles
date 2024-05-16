@@ -203,6 +203,7 @@ updated_capabilities.textDocument.completion.completionItem.insertReplaceSupport
 updated_capabilities.textDocument.codeLens = { dynamicRegistration = false }
 
 local rust_analyzer, rust_analyzer_cmd = nil, { "rustup", "run", "nightly", "rust-analyzer" }
+-- local rust_analyzer, rust_analyzer_cmd = nil, { "rustup", "run", "stable", "rust-analyzer" }
 local has_rt, rt = pcall(require, "rust-tools")
 if has_rt then
   local extension_path = vim.fn.expand "~/.vscode/extensions/sadge-vscode/extension/"
@@ -236,11 +237,11 @@ else
           prefix = "self",
         },
         -- enable code analysis behind feature flagg
-        cargo = { 
+        cargo = {
           buildScripts = {
             enable = true,
           },
-          -- allFeatures = true, 
+          allFeatures = true,
         },
         procMacro = {
           enable = true

@@ -126,7 +126,7 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.fzf/bin')
 # starship init nu | save -f ~/.cache/starship/init.nu
 
 # Initialize atuin. Comment when problems happen with atuin as well
-# atuin init nu --disable-up-arrow | save -f ~/.local/share/atuin/init.nu
+atuin init nu --disable-up-arrow | save -f ~/.local/share/atuin/init.nu
 # atuin init nu | save -f ~/.local/share/atuin/init.nu
 # zoxide init nushell | str replace --all "def-env" "def --env" | save -f ~/.zoxide.nu
 
