@@ -752,3 +752,6 @@ def git-del-branches-except (
 def git-commits-since-creation (main: string) {
     git rev-list --count --first-parent $"($main)..HEAD"
 }
+
+# Source the work nufile that SHOULD NOT BE COMMITED
+source work.nu
