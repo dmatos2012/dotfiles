@@ -19,6 +19,19 @@ opt.splitright = true
 opt.signcolumn = "yes"
 opt.shada = { "'10", "<0", "s10", "h" }
 
+-- This makes clipboard.vim load faster for startup
+vim.g.clipboard = {
+  name = "xsel",
+  copy = {
+    ["+"] = "xsel --nodetach -i -b",
+    ["*"] = "xsel --nodetach -i -p",
+  },
+  paste = {
+    ["+"] = "xsel  -o -b",
+    ["*"] = "xsel  -o -b",
+  },
+  cache_enabled = 1,
+}
 opt.clipboard = "unnamedplus"
 
 -- Don't have `o` add a comment

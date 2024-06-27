@@ -6,6 +6,13 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- Disable builtin plugins
+require "custom.disable_builtin"
+
+-- Use specific pynvim version to speed up python startup
+-- It really speeds it up by 100ms (quite the difference)
+vim.g.python3_host_prog = "/home/david/.venvs/pynvim_venv/bin/python"
+
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
   vim.fn.system {
@@ -27,4 +34,22 @@ require("lazy").setup({ import = "custom/plugins" }, {
   change_detection = {
     notify = false,
   },
+  ui = {
+    icons = {
+      cmd = "⌘",
+      config = "🛠",
+      event = "📅",
+      ft = "📂",
+      init = "⚙",
+      keys = "🗝",
+      plugin = "🔌",
+      runtime = "💻",
+      source = "📄",
+      start = "🚀",
+      task = "📌",
+    },
+  },
 })
+
+-- Jump To last position on file. see :help last-position-jump. Seen on reddit/neovim by justinmk
+vim.cmd [[autocmd BufReadPost * if @% !~# '\.git[\/\\]COMMIT_EDITMSG$' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif]]
