@@ -26,15 +26,16 @@ require("nvim-treesitter.configs").setup {
         smart_rename = "grr",
       },
     },
-  },
-  navigation = {
-    enable = true,
-    keymaps = {
-      goto_definition = "gnd",
-      list_definitions = "gnD",
-      list_definitions_toc = "gO",
-      goto_next_usage = "<a-*>",
-      goto_previous_usage = "<a-#>",
+    navigation = {
+      enable = true,
+      keymaps = {
+        goto_definition_lsp_fallback = "gnd",
+        list_definitions = "gnD",
+        list_definitions_toc = "gO",
+        -- these dont work somehow?
+        goto_next_usage = "<A-*>",
+        goto_previous_usage = "<A-#>",
+      },
     },
   },
   textobjects = {
