@@ -39,6 +39,8 @@ return {
         },
         rust_analyzer = true,
         pyright = true,
+        html = true,
+        tsserver = true,
         cssls = true,
         jsonls = {
           settings = {

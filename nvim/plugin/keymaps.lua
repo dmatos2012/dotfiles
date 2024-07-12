@@ -68,3 +68,13 @@ set("n", "<leader>fh", builtin.help_tags, {})
 vim.api.nvim_create_user_command("Wq", "wq", {})
 vim.api.nvim_create_user_command("W", "w", {})
 vim.api.nvim_create_user_command("Q", "q", {})
+
+-- Helpful delete/change into blackhole buffer
+-- nmap <leader>d "_d
+-- nmap <leader>c "_c
+-- nmap <space>d "_d
+-- nmap <space>c "_c
+
+-- Change nmap above to the function above `set`
+set("n", "<leader>d", '"_d', {})
+set("n", "<leader>c", '"_c', {})
