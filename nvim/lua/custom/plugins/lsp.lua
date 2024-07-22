@@ -39,6 +39,7 @@ return {
         },
         rust_analyzer = true,
         pyright = true,
+        zls = true,
         html = true,
         tsserver = true,
         cssls = true,

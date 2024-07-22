@@ -42,6 +42,8 @@ return {
         gitrebase = false,
         hgcommit = false,
         svn = false,
+        zig = false,
+        c = false,
         cvs = false,
         ["."] = false,
       },
