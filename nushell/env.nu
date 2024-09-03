@@ -118,6 +118,18 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.deno/bin'
 
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.fzf/bin')
 
+# Add rbenv to path
+
+$env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.rbenv/bin')
+$env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.rbenv/shims')
+
+
+
+# ADD Cuda related ENV variables (Cuda is symlink to cuda 11.3 for me)
+$env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/cuda/bin')
+$env.LD_LIBRARY_PATH = '/usr/local/cuda/lib64'
+
+
 
 
 

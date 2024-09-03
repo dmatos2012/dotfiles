@@ -23,3 +23,12 @@ vim.keymap.set("n", "<space>st", function()
   vim.wo.winfixheight = true
   vim.cmd.term()
 end)
+
+-- Open a terminal at the bottom of the screen with a fixed height.
+vim.keymap.set("n", "<space>sv", function()
+  vim.cmd.new()
+  vim.cmd.wincmd "H"
+  -- We dont set height or width since we want it evenly
+  vim.wo.winfixwidth = true
+  vim.cmd.term()
+end)
