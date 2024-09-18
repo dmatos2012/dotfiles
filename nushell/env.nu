@@ -133,6 +133,7 @@ $env.LD_LIBRARY_PATH = '/usr/local/cuda/lib64'
 
 
 
+
 #Initialize starship. Comment when problems happen with starship
 # mkdir ~/.cache/starship
 # starship init nu | save -f ~/.cache/starship/init.nu

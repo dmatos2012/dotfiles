@@ -1,5 +1,5 @@
 require("nvim-treesitter.configs").setup {
-  ensure_installed = { "rust", "python" },
+  ensure_installed = { "rust", "python", "ron", "json" },
   highlight = {
     enable = true,
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
