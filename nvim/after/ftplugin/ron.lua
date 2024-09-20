@@ -58,7 +58,13 @@ local fmt_graphql = function(bufnr)
       local formatted_raw = res.stdout
       -- print(vim.inspect(formatted_raw))
       -- convert the formatted string to array of lines
+      local formatted_raw = formatted_raw:gsub("\n$", "")
+      -- print(vim.inspect(formatted_raw))
+      -- TODO: CHECK NILLL FOR \n
+      -- print(vim.inspect(rw))
+      print "___________________________"
       local formatted = vim.split(formatted_raw, "\n")
+      -- local formatted = { "kahlua", "mayor" }
       -- print(vim.inspect(formatted))
       -- print(vim.inspect { "hello", "hello2", "}" })
       -- Add indentation to match the rest
@@ -85,6 +91,7 @@ local fmt_graphql = function(bufnr)
         final_row = range[3] + 1, -- final line
         final_col = range[4] + 1, -- final col
         formatted = formatted,
+        -- formatted = {"kahllua", "mayor"},
       })
       for _, change in ipairs(changes) do
         vim.api.nvim_buf_set_lines(bufnr, change.start_row, change.final_row, false, change.formatted)
