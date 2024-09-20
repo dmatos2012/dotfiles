@@ -11,12 +11,6 @@
 -- })
 --
 
--- -- Try to make the injections work
--- local text = [[{"a":5}]]
--- local kah = vim.system({ "jq" }, { stdin = text, text = true })
--- local r = kah:wait()
--- print(r.stdout)
---
 local embedded_graphql = vim.treesitter.query.parse(
   "ron",
   [[
@@ -36,7 +30,7 @@ local get_root = function(bufnr)
   return tree:root()
 end
 
-local fmt_rust = function(bufnr)
+local fmt_graphql = function(bufnr)
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local root = get_root(bufnr)
   local changes = {}
@@ -94,18 +88,28 @@ local fmt_rust = function(bufnr)
       })
       for _, change in ipairs(changes) do
         vim.api.nvim_buf_set_lines(bufnr, change.start_row, change.final_row, false, change.formatted)
-        local last_col = vim.api.nvim_buf_get_lines(bufnr, change.final_row - 1, change.final_row, false)[1]
-        vim.api.nvim_buf_set_text(
-          bufnr,
-          change.final_row - 1,
-          #last_col, --1 WORKS
-          change.final_row - 1,
-          #last_col, -- 1 WORKS
-          { [["#]] }
-        )
+        print(vim.inspect(change.end_row))
+
+        print(vim.inspect(#formatted))
+        -- The "# needs to account for the difference in fmt vs original text
+        local actual_final_row = range[1] + #formatted
+        local last_col = vim.api.nvim_buf_get_lines(bufnr, actual_final_row - 1, actual_final_row, false)[1]
+        -- local new_last_line = last_col .. [["#,]]
+        -- vim.api.nvim_buf_set_lines(bufnr, actual_final_row - 1, actual_final_row, false, { new_last_line })
+        -- -- vim.api.nvim_buf_set_text(
+        --
+        --   bufnr,
+        --   -- change.final_row - 1,
+        --   actual_final_row - 1,
+        --   #last_col, --1 WORKS
+        --   actual_final_row - 1,
+        --   -- change.final_row - 1,
+        --   #last_col, -- 1 WORKS
+        --   { [["#]] }
+        -- )
       end
     end
   end
 end
 
-fmt_rust(4)
+fmt_graphql(4)
