@@ -39,6 +39,8 @@ return {
         },
         rust_analyzer = true,
         pyright = true,
+        -- graphql is in after/plugin
+        -- graphql = true,
         zls = true,
         html = true,
         tsserver = true,
@@ -149,6 +151,7 @@ return {
       require("conform").setup {
         formatters_by_ft = {
           lua = { "stylua" },
+          -- graphql = { "prettier" },
         },
       }
 

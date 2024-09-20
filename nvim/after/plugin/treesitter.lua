@@ -1,5 +1,38 @@
+-- Locally installed parsers
+local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+parser_config.graphql = {
+  install_info = {
+    url = "~/build/tree-sitter-graphql", -- local path or git repo
+    files = { "src/parser.c" }, -- note that some parsers also require src/scanner.c or src/scanner.cc
+    -- optional entries:
+    branch = "main", -- default branch in case of git repo if different from master
+    generate_requires_npm = false, -- if stand-alone parser without npm dependencies
+    requires_generate_from_grammar = false, -- if folder contains pre-generated src/parser.c
+  },
+  filetype = "graphql", -- if filetype does not match the parser name
+  injection = {
+    enable = true, -- enable injections
+  },
+}
+parser_config.ron = {
+  install_info = {
+    url = "~/build/tree-sitter-ron", -- local path or git repo
+    files = { "src/parser.c", "src/scanner.c" }, -- note that some parsers also require src/scanner.c or src/scanner.cc
+    -- optional entries:
+    generate_requires_npm = false, -- if stand-alone parser without npm dependencies
+    requires_generate_from_grammar = false, -- if folder contains pre-generated src/parser.c
+  },
+  filetype = "ron", -- if filetype does not match the parser name
+  injection = {
+    enable = true, -- enable injections
+  },
+}
+-- Default ron parser does not support `raw_strings` and I need it,
+-- thus I build locally from the PR in the upstream repo
+-- https://github.com/tree-sitter-grammars/tree-sitter-ron/pull/1
+-- Tree-sitter default supported languages
 require("nvim-treesitter.configs").setup {
-  ensure_installed = { "rust", "python", "ron", "json" },
+  ensure_installed = { "rust", "python", "json", "graphql" },
   highlight = {
     enable = true,
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
@@ -7,6 +40,10 @@ require("nvim-treesitter.configs").setup {
     -- Using this option may slow down your editor, and you may see some duplicate highlights.
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = false,
+  },
+  -- enable injections
+  injections = {
+    enable = true,
   },
   incremental_selection = {
     enable = true,
