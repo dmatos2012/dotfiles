@@ -68,6 +68,7 @@ end
 -- or rewriting the whole buffer even if no line has changed(such a waste)
 -- And then rescanning it to format the `query` string,
 -- but ok this is just a hobby and making the idea work :)
+-- However, the `prettier` part is the BIGGEST bottleneck
 local fmt_graphql = function(bufnr)
   -- rewrite the buffer with the `ron-formatter`
   local buf_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
@@ -95,9 +96,7 @@ local fmt_graphql = function(bufnr)
       change.end_row = range[3] + 1
       change.formatted = formatted
 
-      -- local tempbufnr = 61
-      local tempbufnr = bufnr
-      vim.api.nvim_buf_set_lines(tempbufnr, change.start_row, change.end_row, false, change.formatted)
+      vim.api.nvim_buf_set_lines(bufnr, change.start_row, change.end_row, false, change.formatted)
     end
   end
 end
