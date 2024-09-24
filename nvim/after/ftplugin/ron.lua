@@ -16,23 +16,17 @@ local format_ron_str = function(buf_content)
     { stdin = table.concat(buf_content, "\n"), text = true }
   )
   local res = cmd:wait()
-  -- print(vim.inspect(res))
   local ron_str = res.stdout
-  print(vim.inspect(ron_str))
   return ron_str
 end
 local format_graphql_str = function(node_text)
   local node_text_clean = string.sub(node_text, 4, string.len(node_text) - 2)
-  -- print(vim.inspect(node_text_clean))
   local cmd = vim.system(
     { "prettier", "--parser", "graphql", "--print-width", "150", "--tab-width", "4" },
     { stdin = node_text_clean, text = true }
   )
-  -- print(vim.inspect(node_text_clean))
   local res = cmd:wait()
   local formatted_raw = res.stdout
-  -- print(vim.inspect(formatted_raw))
-  --
   -- convert the formatted string to array of lines
   if formatted_raw ~= nil then
     formatted_raw = formatted_raw:gsub("\n$", "")
@@ -65,16 +59,21 @@ local embedded_graphql = vim.treesitter.query.parse(
 
 local get_root = function(bufnr)
   local root = vim.treesitter.get_parser(bufnr, "ron", {})
-  -- local root = vim.treesiter.query.parse("rust", embedded_graphql)
   local tree = root:parse()[1]
   return tree:root()
 end
 
+-- This doesnt seem the fastest way to do this
+-- SPecially writing the whole buffer(even if only one line has changed)
+-- or rewriting the whole buffer even if no line has changed(such a waste)
+-- And then rescanning it to format the `query` string,
+-- but ok this is just a hobby and making the idea work :)
 local fmt_graphql = function(bufnr)
+  -- rewrite the buffer with the `ron-formatter`
   local buf_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
   local formatted_ron = format_ron_str(buf_content)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, vim.split(formatted_ron, "\n"))
-  -- print(vim.inspect(formatted_ron))
+  -- rewrite the buffer with the `ron-formatter`
   bufnr = bufnr or vim.api.nvim_get_current_buf()
   local root = get_root(bufnr)
   local change = {}
@@ -86,14 +85,11 @@ local fmt_graphql = function(bufnr)
       local range = { node:range() } -- span of the capture
       -- {8,11,73,7}
       local node_text = vim.treesitter.get_node_text(node, bufnr)
-      -- local preformatted = format_ron_str(j
       local formatted = format_graphql_str(node_text)
       -- Given that I replace the last line entirely, I need to add back the raw
       -- string end at the end of the last line,
       formatted[#formatted] = formatted[#formatted] .. [["#,]]
-      -- range is now {8,11,16,7} in editor lines {9,12,17,8}
       change.start_row = range[1] + 1
-      -- change.start_row = 1
       -- end row is inclusive so where you end it, it will remove
       --the contents of that line with whatever you put in there
       change.end_row = range[3] + 1
@@ -101,8 +97,6 @@ local fmt_graphql = function(bufnr)
 
       -- local tempbufnr = 61
       local tempbufnr = bufnr
-      -- repalce the whole buffer with hello world
-      -- vim.api.nvim_buf_set_lines(tempbufnr, 0, -1, false, { "kahlua" })
       vim.api.nvim_buf_set_lines(tempbufnr, change.start_row, change.end_row, false, change.formatted)
     end
   end
