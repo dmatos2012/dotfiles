@@ -80,6 +80,10 @@ local fmt = function(bufnr)
   -- rewrite the buffer with the `ron-formatter`
   local buf_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
   local formatted_ron = format_ron_content(buf_content)
+  -- trim the last newline as its extra
+  local formatted_ron = formatted_ron:gsub("\n$", "")
+  -- again??
+  -- local formatted_ron = formatted_ron:gsub("\n$", "")
   if formatted_ron == nil then
     return
   end
