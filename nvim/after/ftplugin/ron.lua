@@ -4,6 +4,12 @@ local format_ron_content = function(buf_content)
     { stdin = table.concat(buf_content, "\n"), text = true }
   )
   local res = cmd:wait()
+  -- If invalid ron, it will still show 0 as its handled
+  -- graciously in my code
+  if res.code ~= 0 then
+    vim.api.nvim_echo({ { res.stderr, "WarningMsg" } }, false, {})
+    return
+  end
   local ron_str = res.stdout
   return ron_str
 end
@@ -14,6 +20,10 @@ local format_graphql_str = function(node_text)
     { stdin = node_text_clean, text = true }
   )
   local res = cmd:wait()
+  if res.code ~= 0 then
+    vim.api.nvim_echo({ { res.stderr, "WarningMsg" } }, false, {})
+    return
+  end
   local formatted_raw = res.stdout
   local formatted = {}
   -- convert the formatted string to array of lines
@@ -64,6 +74,9 @@ local fmt = function(bufnr)
   -- rewrite the buffer with the `ron-formatter`
   local buf_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
   local formatted_ron = format_ron_content(buf_content)
+  if formatted_ron == nil then
+    return
+  end
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, vim.split(formatted_ron, "\n"))
   -- rewrite the buffer with the `ron-formatter`
   local root = get_root(bufnr)
@@ -77,6 +90,9 @@ local fmt = function(bufnr)
       -- {8,11,73,7}
       local node_text = vim.treesitter.get_node_text(node, bufnr)
       local formatted = format_graphql_str(node_text)
+      if formatted == nil then
+        return
+      end
       -- Given that I replace the last line entirely, I need to add back the raw
       -- string end at the end of the last line,
       formatted[#formatted] = formatted[#formatted] .. [["#,]]
