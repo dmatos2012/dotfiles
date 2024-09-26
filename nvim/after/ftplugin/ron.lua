@@ -39,7 +39,13 @@ local format_graphql_str = function(node_text)
   -- to match what my `formatter` should output which is 4 spaces
   local indent = string.rep(" ", 4)
   for idx, line in ipairs(formatted) do
-    formatted[idx] = indent .. line
+    if line == "" then
+      -- this way we can preserve the new lines rather than changing
+      -- the git diff.
+      formatted[idx] = line
+    else
+      formatted[idx] = indent .. line
+    end
   end
   return formatted
 end
