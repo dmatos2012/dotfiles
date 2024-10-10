@@ -124,4 +124,3 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     fmt(bufnr)
   end,
 })
---
