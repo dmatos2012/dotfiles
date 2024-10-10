@@ -1,101 +1,81 @@
-local curl = require "plenary.curl"
+local set = vim.keymap.set
+local k = vim.keycode
 
-local nmap = require("david.keymap").nmap
+-- Basic movement keybinds, these make navigating splits easy for me
+set("n", "<c-j>", "<c-w><c-j>")
+set("n", "<c-k>", "<c-w><c-k>")
+set("n", "<c-l>", "<c-w><c-l>")
+set("n", "<c-h>", "<c-w><c-h>")
 
-nmap {
-  "<M-j>",
-  function()
-    if vim.opt.diff:get() then
-      vim.cmd [[normal! ]c]]
-    else
-      vim.cmd [[m .+1<CR>==]]
-    end
-  end,
-}
+set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
+set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute the current file" })
 
-nmap {
-  "<M-k>",
-  function()
-    if vim.opt.diff:get() then
-      vim.cmd [[normal! [c]]
-    else
-      vim.cmd [[m .-2<CR>==]]
-    end
-  end,
-}
-
-nmap {
-  "<leader>t",
-  function()
-    if vim.bo.filetype == "lua" then
-      return "<Plug>PlenaryTestFile"
-    elseif vim.bo.filetype == "go" then
-      print "We doing go stuffs"
-      return ""
-    end
-  end,
-  { expr = true },
-}
-
-local markdown_paste = function(link)
-  link = link or vim.fn.getreg "+"
-
-  if not vim.startswith(link, "https://") then
-    return
+-- Toggle hlsearch if it's on, otherwise just do "enter"
+set("n", "<CR>", function()
+  ---@diagnostic disable-next-line: undefined-field
+  if vim.v.hlsearch == 1 then
+    vim.cmd.nohl()
+    return ""
+  else
+    return k "<CR>"
   end
+end, { expr = true })
 
-  local request = curl.get(link)
-  if not request.status == 200 then
-    print "Failed to get link"
-    return
+-- Normally these are not good mappings, but I have left/right on my thumb
+-- cluster, so navigating tabs is quite easy this way.
+set("n", "<left>", "gT")
+set("n", "<right>", "gt")
+
+-- There are builtin keymaps for this now, but I like that it shows
+-- the float when I navigate to the error - so I override them.
+set("n", "]d", vim.diagnostic.goto_next)
+set("n", "[d", vim.diagnostic.goto_prev)
+
+-- These mappings control the size of splits (height/width)
+set("n", "<M-,>", "<c-w>5<")
+set("n", "<M-.>", "<c-w>5>")
+set("n", "<M-t>", "<C-W>+")
+set("n", "<M-s>", "<C-W>-")
+
+set("n", "<M-j>", function()
+  if vim.opt.diff:get() then
+    vim.cmd [[normal! ]c]]
+  else
+    vim.cmd [[m .+1<CR>==]]
   end
-
-  local html_parser = vim.treesitter.get_string_parser(request.body, "html")
-  if not html_parser then
-    print "Must have html parser installed"
-    return
-  end
-
-  local tree = (html_parser:parse() or {})[1]
-  if not tree then
-    print "Failed to parse tree"
-    return
-  end
-
-  local query = vim.treesitter.parse_query(
-    "html",
-    [[
-      (
-       (element
-        (start_tag
-         (tag_name) @tag)
-        (text) @text
-       )
-       (#eq? @tag "title")
-      )
-    ]]
-  )
-
-  for id, node in query:iter_captures(tree:root(), request.body, 0, -1) do
-    local name = query.captures[id]
-    if name == "text" then
-      local title = vim.treesitter.get_node_text(node, request.body)
-      vim.api.nvim_input(string.format("a[%s](%s)", title, link))
-      return
-    end
-  end
-end
-
-nmap { "<leader>mdp", markdown_paste }
--- nnoremap { "<space><space>s", "<cmd>source ~/.config/nvim/after/plugin/luasnip.lua<CR>" }
-
--- Switch between tabs
-vim.keymap.set("n", "<Right>", function()
-  vim.cmd [[checktime]]
-  vim.api.nvim_feedkeys("gt", "n", true)
 end)
 
-vim.keymap.set("n", "<Left>", function()
-  vim.cmd [[checktime]]
-  vim.api.nvim_feedkeys("gT", "n", true)
+set("n", "<M-k>", function()
+  if vim.opt.diff:get() then
+    vim.cmd [[normal! [c]]
+  else
+    vim.cmd [[m .-2<CR>==]]
+  end
 end)
+
+set("n", "<space>tt", function()
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = 0 }, { bufnr = 0 })
+end)
+
+-- Telescope related
+local builtin = require "telescope.builtin"
+set("n", "<leader>ft", builtin.find_files, {})
+set("n", "<leader>fg", builtin.live_grep, {})
+set("n", "<leader>fb", builtin.buffers, {})
+set("n", "<leader>fh", builtin.help_tags, {})
+set("n", "<leader>to", builtin.colorscheme, {})
+
+-- Fat fingers commands
+vim.api.nvim_create_user_command("Wq", "wq", {})
+vim.api.nvim_create_user_command("W", "w", {})
+vim.api.nvim_create_user_command("Q", "q", {})
+
+-- Helpful delete/change into blackhole buffer
+-- nmap <leader>d "_d
+-- nmap <leader>c "_c
+-- nmap <space>d "_d
+-- nmap <space>c "_c
+
+-- Change nmap above to the function above `set`
+set("n", "<leader>d", '"_d', {})
+set("n", "<leader>c", '"_c', {})

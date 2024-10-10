@@ -1,41 +1,12 @@
-local nmap = require("david.keymap").nmap
-
 vim.diagnostic.config {
   underline = true,
   virtual_text = {
+    prefix = "",
     severity = nil,
     source = "if_many",
     format = nil,
   },
   signs = true,
-
-  -- options for floating windows:
-  float = {
-    show_header = true,
-    -- border = "rounded",
-    -- source = "always",
-    format = function(d)
-      if not d.code and not d.user_data then
-        return d.message
-      end
-
-      local t = vim.deepcopy(d)
-      local code = d.code
-      if not code then
-        if not d.user_data.lsp then
-          return d.message
-        end
-
-        code = d.user_data.lsp.code
-      end
-      if code then
-        t.message = string.format("%s [%s]", t.message, code):gsub("1. ", "")
-      end
-      return t.message
-    end,
-  },
-
-  -- general purpose
   severity_sort = true,
   update_in_insert = false,
 }
@@ -58,33 +29,18 @@ local get_highest_error_severity = function()
   end
 end
 
-nmap {
-  "<space>dn",
-  function()
-    vim.diagnostic.goto_next {
-      severity = get_highest_error_severity(),
-      wrap = true,
-      float = true,
-    }
-  end,
-}
+-- Maybe move these mappings to `mappings.lua`
+-- For now we leave them here
+--
+local set = vim.keymap.set
+set("n", "<space>dn", function()
+  vim.diagnostic.goto_next { severity = get_highest_error_severity(), wrap = true, float = true }
+end)
 
-nmap {
-  "<space>dp",
-  function()
-    vim.diagnostic.goto_prev {
-      severity = get_highest_error_severity(),
-      wrap = true,
-      float = true,
-    }
-  end,
-}
+set("n", "<space>dp", function()
+  vim.diagnostic.goto_prev { severity = get_highest_error_severity(), wrap = true, float = true }
+end)
 
-nmap {
-  "<space>sl",
-  function()
-    vim.diagnostic.open_float(0, {
-      scope = "line",
-    })
-  end,
-}
+set("n", "<space>sl", function()
+  vim.diagnostic.open_float(0, { scope = "line" })
+end)

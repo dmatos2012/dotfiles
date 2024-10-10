@@ -1,223 +1,129 @@
-if not pcall(require, "nvim-treesitter") then
-  return
-end
-
-local list = require("nvim-treesitter.parsers").get_parser_configs()
-list.lua = {
+-- Locally installed parsers
+local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+parser_config.graphql = {
   install_info = {
-    url = "https://github.com/tjdevries/tree-sitter-lua",
-    revision = "0e860f697901c9b610104eb61d3812755d5211fc",
-    files = { "src/parser.c", "src/scanner.c" },
-    branch = "master",
+    url = "~/build/tree-sitter-graphql", -- local path or git repo
+    files = { "src/parser.c" }, -- note that some parsers also require src/scanner.c or src/scanner.cc
+    -- optional entries:
+    branch = "main", -- default branch in case of git repo if different from master
+    generate_requires_npm = false, -- if stand-alone parser without npm dependencies
+    requires_generate_from_grammar = false, -- if folder contains pre-generated src/parser.c
+  },
+  filetype = "graphql", -- if filetype does not match the parser name
+  injection = {
+    enable = true, -- enable injections
   },
 }
-list.nu = {
+parser_config.ron = {
   install_info = {
-    url = "https://github.com/nushell/tree-sitter-nu",
-    files = { "src/parser.c" },
-    branch = "main",
+    url = "~/build/tree-sitter-ron", -- local path or git repo
+    files = { "src/parser.c", "src/scanner.c" }, -- note that some parsers also require src/scanner.c or src/scanner.cc
+    -- optional entries:
+    generate_requires_npm = false, -- if stand-alone parser without npm dependencies
+    requires_generate_from_grammar = false, -- if folder contains pre-generated src/parser.c
   },
-  filetype = "nu",
-}
-list.rsx = {
-  install_info = {
-    url = "https://github.com/tjdevries/tree-sitter-rsx",
-    files = { "src/parser.c", "src/scanner.cc" },
-    branch = "master",
+  filetype = "ron", -- if filetype does not match the parser name
+  injection = {
+    enable = true, -- enable injections
   },
 }
-list.perl = {
-  install_info = {
-    url = "https://github.com/tree-sitter-perl/tree-sitter-perl",
-    -- revision = "release",
-    branch = "master",
-    files = { "src/parser.c", "src/scanner.c" },
-    requires_generate_from_grammar = true,
-  },
-}
-list.just = {
-  install_info = {
-    url = "https://github.com/IndianBoy42/tree-sitter-just", -- local path or git repo
-    files = { "src/parser.c", "src/scanner.cc" },
-    branch = "main",
-    -- use_makefile = true -- this may be necessary on MacOS (try if you see compiler errors)
-  },
-  maintainers = { "@IndianBoy42" },
-}
-
--- alt+<space>, alt+p -> swap next
--- alt+<backspace>, alt+p -> swap previous
--- swap_previous = {
---   ["<M-s><M-P>"] = "@parameter.inner",
---   ["<M-s><M-F>"] = "@function.outer",
--- },
-local swap_next, swap_prev = (function()
-  local swap_objects = {
-    p = "@parameter.inner",
-    f = "@function.outer",
-    e = "@element",
-
-    -- Not ready, but I think it's my fault :)
-    -- v = "@variable",
-  }
-  local n, p = {}, {}
-  for key, obj in pairs(swap_objects) do
-    n[string.format("<C-Space><C-%s>", key)] = obj
-    p[string.format("<C-BS><C-%s>", key)] = obj
-  end
-
-  return n, p
-end)()
-
-local _ = require("nvim-treesitter.configs").setup {
-  ensure_installed = {
-    "html",
-    "javascript",
-    "typescript",
-    "tsx",
-    "json",
-    "vim",
-    "markdown",
-    "python",
-    "rust",
-    "toml",
-    "hcl",
-  },
-
+-- Default ron parser does not support `raw_strings` and I need it,
+-- thus I build locally from the PR in the upstream repo
+-- https://github.com/tree-sitter-grammars/tree-sitter-ron/pull/1
+-- Tree-sitter default supported languages
+require("nvim-treesitter.configs").setup {
+  ensure_installed = { "rust", "python", "json", "graphql" },
   highlight = {
     enable = true,
-    -- use_languagetree = false,
-    -- disable = { "json" },
-    -- custom_captures = custom_captures,
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
   },
-
-  refactor = {
-    highlight_definitions = { enable = true },
-    highlight_current_scope = { enable = false },
-
-    smart_rename = {
-      enable = false,
-      keymaps = {
-        -- mapping to rename reference under cursor
-        smart_rename = "grr",
-      },
-    },
-
-    navigation = {
-      enable = false,
-      keymaps = {
-        goto_definition = "gnd", -- mapping to go to definition of symbol under cursor
-        list_definitions = "gnD", -- mapping to list all definitions in current file
-      },
-    },
+  -- enable injections
+  injections = {
+    enable = true,
   },
-
   incremental_selection = {
     enable = true,
     keymaps = {
-      init_selection = "<C-w>", -- maps in normal mode to init the node/scope selection
-      node_incremental = "<C-w>", -- increment to the upper named parent
-      node_decremental = "<C-C-w>", -- decrement to the previous node
-      scope_incremental = "<C-e>", -- increment to the upper scope (as defined in locals.scm)
+      init_selection = "gnn",
+      node_incremental = "grn",
+      scope_incremental = "grc",
+      node_decremental = "grm",
     },
   },
-
-  context_commentstring = {
-    enable = true,
-
-    -- With Comment.nvim, we don't need to run this on the autocmd.
-    -- Only run it in pre-hook
-    enable_autocmd = false,
-
-    config = {
-      c = "// %s",
-      lua = "-- %s",
-    },
-  },
-
-  textobjects = {
-    move = {
+  refactor = {
+    highlight_definitions = { enable = true },
+    hightlight_current_scope = { enable = true },
+    smart_rename = {
       enable = true,
-      set_jumps = true,
-
-      goto_next_start = {
-        ["]p"] = "@parameter.inner",
-        ["]m"] = "@function.outer",
-        ["]]"] = "@class.outer",
-      },
-      goto_next_end = {
-        ["]M"] = "@function.outer",
-        ["]["] = "@class.outer",
-      },
-      goto_previous_start = {
-        ["[p"] = "@parameter.inner",
-        ["[m"] = "@function.outer",
-        ["[["] = "@class.outer",
-      },
-      goto_previous_end = {
-        ["[M"] = "@function.outer",
-        ["[]"] = "@class.outer",
-      },
-    },
-
-    select = {
-      enable = true,
-      lookahead = true,
       keymaps = {
-        ["af"] = "@function.outer",
-        ["if"] = "@function.inner",
-
-        ["ac"] = "@conditional.outer",
-        ["ic"] = "@conditional.inner",
-
-        ["aa"] = "@parameter.outer",
-        ["ia"] = "@parameter.inner",
-
-        ["av"] = "@variable.outer",
-        ["iv"] = "@variable.inner",
+        smart_rename = "grr",
       },
     },
-
+    navigation = {
+      enable = true,
+      keymaps = {
+        goto_definition_lsp_fallback = "gnd",
+        list_definitions = "gnD",
+        list_definitions_toc = "gO",
+        -- these dont work somehow?
+        goto_next_usage = "<A-*>",
+        goto_previous_usage = "<A-#>",
+      },
+    },
+  },
+  textobjects = {
     swap = {
       enable = true,
-      swap_next = swap_next,
-      swap_previous = swap_prev,
+      swap_next = {
+        ["<leader>a"] = "@parameter.inner",
+      },
+      swap_previous = {
+        ["<leader>A"] = "@parameter.inner",
+      },
     },
-  },
+    select = {
+      enable = true,
 
-  playground = {
-    enable = true,
-    updatetime = 25,
-    persist_queries = true,
-    keybindings = {
-      toggle_query_editor = "o",
-      toggle_hl_groups = "i",
-      toggle_injected_languages = "t",
+      -- Automatically jump forward to textobj, similar to targets.vim
+      lookahead = true,
 
-      -- This shows stuff like literal strings, commas, etc.
-      toggle_anonymous_nodes = "a",
-      toggle_language_display = "I",
-      focus_language = "f",
-      unfocus_language = "F",
-      update = "R",
-      goto_node = "<cr>",
-      show_help = "?",
+      keymaps = {
+        -- You can use the capture groups defined in textobjects.scm
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["ac"] = "@class.outer",
+        -- You can optionally set descriptions to the mappings (used in the desc parameter of
+        -- nvim_buf_set_keymap) which plugins like which-key display
+        ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+        -- You can also use captures from other query groups like `locals.scm`
+        ["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
+      },
+      -- You can choose the select mode (default is charwise 'v')
+      --
+      -- Can also be a function which gets passed a table with the keys
+      -- * query_string: eg '@function.inner'
+      -- * method: eg 'v' or 'o'
+      -- and should return the mode ('v', 'V', or '<c-v>') or a table
+      -- mapping query_strings to modes.
+      selection_modes = {
+        ["@parameter.outer"] = "v", -- charwise
+        ["@function.outer"] = "V", -- linewise
+        ["@class.outer"] = "<c-v>", -- blockwise
+      },
+      -- If you set this to `true` (default is `false`) then any textobject is
+      -- extended to include preceding or succeeding whitespace. Succeeding
+      -- whitespace has priority in order to act similarly to eg the built-in
+      -- `ap`.
+      --
+      -- Can also be a function which gets passed a table with the keys
+      -- * query_string: eg '@function.inner'
+      -- * selection_mode: eg 'v'
+      -- and should return true or false
+      include_surrounding_whitespace = true,
     },
   },
 }
-
-require("treesitter-context").setup { enable = true }
-vim.treesitter.query.set("lua", "context", "")
-
-local read_query = function(filename)
-  return table.concat(vim.fn.readfile(vim.fn.expand(filename)), "\n")
-end
-
--- Overrides any existing tree sitter query for a particular name
--- vim.treesitter.set_query("rust", "highlights", read_query "~/.config/nvim/queries/rust/highlights.scm")
--- vim.treesitter.set_query("sql", "highlights", read_query "~/.config/nvim/queries/sql/highlights.scm")
-
-vim.cmd [[highlight IncludedC guibg=#373b41]]
-
-vim.cmd [[nnoremap <space>tp :TSPlaygroundToggle<CR>]]
-vim.cmd [[nnoremap <space>th :TSHighlightCapturesUnderCursor<CR>]]

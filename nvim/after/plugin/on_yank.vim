@@ -7,3 +7,4 @@ augroup LuaHighlight
         \ on_macro = true
         \ }
 augroup END
+
