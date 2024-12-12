@@ -4,7 +4,8 @@ require("supermaven-nvim").setup {
     clear_suggestion = "<M-]>",
     accept_word = "<M-j>",
   },
-  ignore_filetypes = { cpp = true },
+  -- ignore_filetypes = { cpp = true },
+  ignore_filetypes = { cpp = true, rust = true },
   -- color = {
   --   suggestion_color = "#ffffff",
   --   cterm = 244,
