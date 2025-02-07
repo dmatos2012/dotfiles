@@ -411,19 +411,21 @@ $env.config = {
     ]
 
     keybindings: [
-        {
-            name: completion_menu
-            modifier: none
-            keycode: tab
-            mode: [emacs vi_normal vi_insert]
-            event: {
-                until: [
-                    { send: menu name: completion_menu }
-                    { send: menunext }
-                    { edit: complete }
-                ]
-            }
-        }
+        # Commenting out since i dont use tab
+        # Remap later to something else
+        # {
+        #     name: completion_menu
+        #     modifier: none
+        #     keycode: tab
+        #     mode: [emacs vi_normal vi_insert]
+        #     event: {
+        #         until: [
+        #             { send: menu name: completion_menu }
+        #             { send: menunext }
+        #             { edit: complete }
+        #         ]
+        #     }
+        # }
         {
             name: completion_previous_menu
             modifier: shift
@@ -919,14 +921,14 @@ $env.config = {
             mode: emacs
             event: { edit: selectall }
         }
-        {
-          name: fzf_dir_menu_nu_ui
-          modifier: shift
-          #modifier: control
-          keycode: char_n
-          mode: [emacs, vi_normal, vi_insert]
-          event: { send: menu name: fzf_dir_menu_nu_ui }
-        }
+        # {
+        #   name: fzf_dir_menu_nu_ui
+        #   modifier: shift
+        #   #modifier: control
+        #   keycode: char_n
+        #   mode: [emacs, vi_normal, vi_insert]
+        #   event: { send: menu name: fzf_dir_menu_nu_ui }
+        # }
         {
             name: change_dir_with_fzf
             # modifier: shift

@@ -14,6 +14,22 @@ parser_config.graphql = {
     enable = true, -- enable injections
   },
 }
+parser_config.rescript = {
+  install_info = {
+    url = "https://github.com/rescript-lang/tree-sitter-rescript.git",
+    files = { "src/parser.c", "src/scanner.c" },
+    branch = "main",
+    generate_requires_npm = false, -- if stand-alone parser without npm dependencies
+    requires_generate_from_grammar = true, -- if folder contains pre-generated src/parser.c
+    filetype = "rescript",
+    injection = {
+      enable = true, -- enable injections
+    },
+    highlight = {
+      enable = true, -- enable highlight
+    },
+  },
+}
 parser_config.ron = {
   install_info = {
     url = "~/build/tree-sitter-ron", -- local path or git repo
@@ -32,7 +48,7 @@ parser_config.ron = {
 -- https://github.com/tree-sitter-grammars/tree-sitter-ron/pull/1
 -- Tree-sitter default supported languages
 require("nvim-treesitter.configs").setup {
-  ensure_installed = { "rust", "python", "json", "graphql" },
+  ensure_installed = { "rust", "python", "json", "graphql", "rescript" },
   highlight = {
     enable = true,
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.

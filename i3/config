@@ -57,7 +57,7 @@ tiling_drag modifier titlebar
 
 
 # start a terminal
-bindsym $mod+Return exec kitty 
+bindsym $mod+Return exec ghostty
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -267,9 +267,9 @@ exec --no-startup-id picom -b
 exec --no-startup-id gnome-keyring-daemon --start --components=ssh
 
 # Add floating for notes/vim
-bindsym $mod+BackSpace exec kitty -T "vim-float"
+# bindsym $mod+BackSpace exec kitty -T "vim-float"
 # bindsym $mod+BackSpace exec $HOME/.config/i3/launch_nautilus.nu
-for_window [title="vim-float"] floating enable resize set 500 400
+# for_window [title="vim-float"] floating enable resize set 500 400
 
 
 
@@ -280,6 +280,9 @@ for_window [title="vim-float"] floating enable resize set 500 400
 
 # Make gparted able to be started
 for_window [class="GParted"] floating enable border normal
+
+# make ssh agent
+# exec --no-startup-id ssh-agent -D -a /run/user/1000/ssh-agent.socket
 
 
 

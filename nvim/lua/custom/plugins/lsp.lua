@@ -41,6 +41,7 @@ return {
         pyright = true,
         -- graphql is in after/plugin
         -- graphql = true,
+        rescriptls = true,
         zls = true,
         html = true,
         tsserver = true,

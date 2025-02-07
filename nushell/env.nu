@@ -129,22 +129,47 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.rbenv/shi
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/cuda/bin')
 $env.LD_LIBRARY_PATH = '/usr/local/cuda/lib64'
 
+# ADD zig to path
+$env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.local/zig-linux-x86_64-0.13.0/')
 
+# Add support for FNM
+# Taken from https://github.com/Schniz/fnm/issues/463
+use std "path add"
+if not (which fnm | is-empty) {
+  ^fnm env --json | from json | load-env
+  let node_path = match $nu.os-info.name {
+    "windows" => $"($env.FNM_MULTISHELL_PATH)",
+    _ => $"($env.FNM_MULTISHELL_PATH)/bin",
+  }
+  path add $node_path
+}
 
+# SSH agent
 
+do --env {
+    let ssh_agent_file = (
+        $nu.temp-path | path join $"ssh-agent-($env.USER? | default $env.USERNAME).nuon"
+    )
 
+    if ($ssh_agent_file | path exists) {
+        let ssh_agent_env = open ($ssh_agent_file)
+        if ($"/proc/($ssh_agent_env.SSH_AGENT_PID)" | path exists) {
+            load-env $ssh_agent_env
+            return
+        } else {
+            rm $ssh_agent_file
+        }
+    }
 
-#Initialize starship. Comment when problems happen with starship
-# mkdir ~/.cache/starship
-# starship init nu | save -f ~/.cache/starship/init.nu
+    let ssh_agent_env = ^ssh-agent -c
+        | lines
+        | first 2
+        | parse "setenv {name} {value};"
+        | transpose --header-row
+        | into record
+    load-env $ssh_agent_env
+    $ssh_agent_env | save --force $ssh_agent_file
+}
 
-# Initialize atuin. Comment when problems happen with atuin as well
-atuin init nu --disable-up-arrow | save -f ~/.local/share/atuin/init.nu
-# atuin init nu | save -f ~/.local/share/atuin/init.nu
-# zoxide init nushell | str replace --all "def-env" "def --env" | save -f ~/.zoxide.nu
-
-# Initialize carapace for completions
-mkdir ~/.cache/carapace
-carapace _carapace nushell | save --force ~/.cache/carapace/init.nu
-
-
+# Add it to Path
+# $env.PATH = ($env.PATH | split row (char esep) | prepend $env.FNM_MULTISHELL_PATH)
