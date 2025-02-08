@@ -42,6 +42,18 @@ return {
         -- graphql is in after/plugin
         -- graphql = true,
         rescriptls = true,
+        ocamllsp = {
+          -- manual_install = true,
+          -- cmd = { "dune", "tools", "exec", "ocamllsp" },
+          settings = {
+            codelens = { enable = true },
+            inlayHints = { enable = true },
+            syntaxDocumentation = { enable = true },
+          },
+          server_capabilities = {
+            semanticTokensProvider = false,
+          },
+        },
         zls = true,
         html = true,
         tsserver = true,
