@@ -42,6 +42,9 @@ return {
         -- graphql is in after/plugin
         -- graphql = true,
         rescriptls = true,
+        elixirls = {
+          cmd = {"/home/david/build/elixir-ls/language_server.sh"},
+        },
         ocamllsp = {
           -- manual_install = true,
           -- cmd = { "dune", "tools", "exec", "ocamllsp" },

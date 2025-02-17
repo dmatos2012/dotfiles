@@ -170,6 +170,17 @@ do --env {
     load-env $ssh_agent_env
     $ssh_agent_env | save --force $ssh_agent_file
 }
+do --env {
+    let opam_env_vars = ^opam env
+        | lines
+        | where $it != is-empty
+        | split column "=" name value
+        | update value {split column ";" path | get path.0 | str trim -c "'"}
+        | reduce -f {} {|it acc| $acc | insert $it.name $it.value }
+    load-env $opam_env_vars
+
+}
+
 
 # Add it to Path
 # $env.PATH = ($env.PATH | split row (char esep) | prepend $env.FNM_MULTISHELL_PATH)

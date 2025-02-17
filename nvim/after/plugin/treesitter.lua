@@ -48,7 +48,25 @@ parser_config.ron = {
 -- https://github.com/tree-sitter-grammars/tree-sitter-ron/pull/1
 -- Tree-sitter default supported languages
 require("nvim-treesitter.configs").setup {
-  ensure_installed = { "rust", "python", "json", "graphql", "rescript" },
+  ensure_installed = {
+    "rust",
+    "python",
+    "json",
+    "graphql",
+    "rescript",
+    "ocaml",
+    "elixir",
+    "eex",
+    "erlang",
+    "heex",
+    "html",
+  },
+  -- I had to enable this only for Elixir
+  -- Without it, it was working fine for all other languages
+  -- Watch if it messes up indentaiton on new files
+  indent = {
+    enable = true,
+  },
   highlight = {
     enable = true,
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.

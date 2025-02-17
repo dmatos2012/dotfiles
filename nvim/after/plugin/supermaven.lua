@@ -6,7 +6,7 @@ require("supermaven-nvim").setup {
   },
   -- ignore_filetypes = { cpp = true },
   -- Try to practice and learn
-  ignore_filetypes = { cpp = true, rust = true, rescript = true },
+  ignore_filetypes = { cpp = true, rust = true, rescript = true, ocaml = true, elixir = true },
   -- color = {
   --   suggestion_color = "#ffffff",
   --   cterm = 244,
