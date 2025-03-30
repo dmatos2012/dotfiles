@@ -267,9 +267,9 @@ exec --no-startup-id picom -b
 exec --no-startup-id gnome-keyring-daemon --start --components=ssh
 
 # Add floating for notes/vim
-# bindsym $mod+BackSpace exec kitty -T "vim-float"
+bindsym $mod+BackSpace exec kitty -T "vim-float"
 # bindsym $mod+BackSpace exec $HOME/.config/i3/launch_nautilus.nu
-# for_window [title="vim-float"] floating enable resize set 500 400
+for_window [title="vim-float"] floating enable resize set 500 400
 
 
 
