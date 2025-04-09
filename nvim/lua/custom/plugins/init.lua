@@ -1,3 +1,3 @@
 return {
-  { dir = "~/plugins/ocaml.nvim" },
+  -- { dir = "~/plugins/ocaml.nvim" },
 }

@@ -50,6 +50,7 @@ parser_config.ron = {
 require("nvim-treesitter.configs").setup {
   ensure_installed = {
     "rust",
+    "nu",
     "python",
     "json",
     "graphql",

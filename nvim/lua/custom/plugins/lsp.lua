@@ -43,7 +43,7 @@ return {
         -- graphql = true,
         rescriptls = true,
         elixirls = {
-          cmd = {"/home/david/build/elixir-ls/language_server.sh"},
+          cmd = { "/home/david/build/elixir-ls/language_server.sh" },
         },
         ocamllsp = {
           -- manual_install = true,
@@ -59,7 +59,7 @@ return {
         },
         zls = true,
         html = true,
-        tsserver = true,
+        ts_ls = true,
         cssls = true,
         jsonls = {
           settings = {

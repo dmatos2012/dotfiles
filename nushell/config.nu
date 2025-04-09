@@ -136,7 +136,7 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/cuda/bin')
 $env.LD_LIBRARY_PATH = '/usr/local/cuda/lib64'
 
 # ADD zig to path
-$env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.local/zig-linux-x86_64-0.13.0/')
+$env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.local/zig-linux-x86_64-0.14.0/')
 
 
 # Add support for FNM
