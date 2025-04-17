@@ -57,14 +57,20 @@ set("n", "<space>tt", function()
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = 0 }, { bufnr = 0 })
 end)
 
--- Telescope related
-local builtin = require "telescope.builtin"
-set("n", "<leader>ft", builtin.find_files, {})
-set("n", "<leader>fg", builtin.live_grep, {})
-set("n", "<leader>fb", builtin.buffers, {})
-set("n", "<leader>fh", builtin.help_tags, {})
-set("n", "<leader>to", builtin.colorscheme, {})
-
+-- -- Telescope related
+-- Use FZF instead
+local fzf = require "fzf-lua"
+-- local builtin = require "telescope.builtin"
+set("n", "<leader>ft", fzf.files, {})
+set("n", "<leader>fg", fzf.live_grep, {})
+-- This doesnt work yet for me
+set("x", "<leader>fg", fzf.grep_visual, {})
+-- create grep_visual using mode "x"
+-- set("n", "<leader>fg", fzf.grep_visual, {})
+-- set("n", "<leader>fb", builtin.buffers, {})
+-- set("n", "<leader>fh", builtin.help_tags, {})
+-- set("n", "<leader>to", builtin.colorscheme, {})
+--
 -- Fat fingers commands
 vim.api.nvim_create_user_command("Wq", "wq", {})
 vim.api.nvim_create_user_command("W", "w", {})

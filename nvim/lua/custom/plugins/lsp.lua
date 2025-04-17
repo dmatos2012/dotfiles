@@ -132,17 +132,21 @@ return {
             settings = {}
           end
 
-          local builtin = require "telescope.builtin"
+          -- local builtin = require "telescope.builtin"
+          local fzf = require "fzf-lua"
 
           vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
-          vim.keymap.set("n", "gd", builtin.lsp_definitions, { buffer = 0 })
-          vim.keymap.set("n", "gr", builtin.lsp_references, { buffer = 0 })
+          -- vim.keymap.set("n", "gd", builtin.lsp_definitions, { buffer = 0 })
+          -- vim.keymap.set("n", "gr", builtin.lsp_references, { buffer = 0 })
+          vim.keymap.set("n", "fd", fzf.lsp_document_diagnostics, { buffer = 0 })
+          vim.keymap.set("n", "fD", fzf.lsp_workspace_diagnostics)
+          vim.keymap.set("n", "ca", fzf.lsp_code_actions)
           vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = 0 })
           vim.keymap.set("n", "gT", vim.lsp.buf.type_definition, { buffer = 0 })
           vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = 0 })
 
           vim.keymap.set("n", "<space>cr", vim.lsp.buf.rename, { buffer = 0 })
-          vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, { buffer = 0 })
+          -- vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, { buffer = 0 })
 
           local filetype = vim.bo[bufnr].filetype
           if disable_semantic_tokens[filetype] then
