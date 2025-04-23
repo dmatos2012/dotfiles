@@ -136,12 +136,11 @@ return {
           local fzf = require "fzf-lua"
 
           vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
-          -- vim.keymap.set("n", "gd", builtin.lsp_definitions, { buffer = 0 })
-          -- vim.keymap.set("n", "gr", builtin.lsp_references, { buffer = 0 })
           vim.keymap.set("n", "fd", fzf.lsp_document_diagnostics, { buffer = 0 })
           vim.keymap.set("n", "fD", fzf.lsp_workspace_diagnostics)
           vim.keymap.set("n", "ca", fzf.lsp_code_actions)
-          vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = 0 })
+          vim.keymap.set("n", "gd", fzf.lsp_definitions)
+          vim.keymap.set("n", "gr", fzf.lsp_references)
           vim.keymap.set("n", "gT", vim.lsp.buf.type_definition, { buffer = 0 })
           vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = 0 })
 

@@ -62,6 +62,7 @@ end)
 local fzf = require "fzf-lua"
 -- local builtin = require "telescope.builtin"
 set("n", "<leader>ft", fzf.files, {})
+set("n", "<leader>fo", fzf.oldfiles, {})
 set("n", "<leader>fg", fzf.live_grep, {})
 -- This doesnt work yet for me
 set("x", "<leader>fg", fzf.grep_visual, {})
