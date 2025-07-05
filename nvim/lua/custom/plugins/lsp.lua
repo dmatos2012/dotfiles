@@ -42,6 +42,8 @@ return {
         -- graphql is in after/plugin
         -- graphql = true,
         rescriptls = true,
+        -- TODO: Reenable elixirls once 
+        -- i get most packages working with nix
         -- elixirls = {
         --   cmd = { "/home/david/build/elixir-ls/language_server.sh" },
         -- },
