@@ -3,8 +3,8 @@ return {
     "neovim/nvim-lspconfig",
     dependencies = {
       "folke/neodev.nvim",
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
+      -- "williamboman/mason.nvim",
+      -- "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
 
       { "j-hui/fidget.nvim", opts = {} },
@@ -42,9 +42,9 @@ return {
         -- graphql is in after/plugin
         -- graphql = true,
         rescriptls = true,
-        elixirls = {
-          cmd = { "/home/david/build/elixir-ls/language_server.sh" },
-        },
+        -- elixirls = {
+        --   cmd = { "/home/david/build/elixir-ls/language_server.sh" },
+        -- },
         ocamllsp = {
           -- manual_install = true,
           -- cmd = { "dune", "tools", "exec", "ocamllsp" },
@@ -99,13 +99,13 @@ return {
         end
       end, vim.tbl_keys(servers))
 
-      require("mason").setup()
-      local ensure_installed = {
-        "stylua",
-      }
+      -- require("mason").setup()
+      -- local ensure_installed = {
+      --   "stylua",
+      -- }
 
-      vim.list_extend(ensure_installed, servers_to_install)
-      require("mason-tool-installer").setup { ensure_installed = ensure_installed }
+      -- vim.list_extend(ensure_installed, servers_to_install)
+      -- require("mason-tool-installer").setup { ensure_installed = ensure_installed }
 
       for name, config in pairs(servers) do
         if config == true then
