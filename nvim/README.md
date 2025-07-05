@@ -1,7 +1,4 @@
-# TJ's Config
+# David's Config
 
-Hi, this config is for TJ.
-
-It won't work for your computer! But, you can read it if you'd like :)
-
-Bye!
+Hi, this config was originally copied from TJs nvim config.
+After, I made some changes and now is a hybrid of both configs.
