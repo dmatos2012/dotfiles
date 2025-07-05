@@ -72,6 +72,7 @@ source ~/.zoxide.nu
 # Source carapace
 source ~/.cache/carapace/init.nu
 
+
 #Source atuin
 source ~/.local/share/atuin/init.nu
 
@@ -137,6 +138,14 @@ $env.LD_LIBRARY_PATH = '/usr/local/cuda/lib64'
 
 # ADD zig to path
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.local/zig-linux-x86_64-0.14.0/')
+
+# Add flutter to path
+
+$env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/build/flutter-dev/flutter/bin')
+
+
+# Add opencode to path
+$env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.opencode/bin')
 
 
 # Add support for FNM
