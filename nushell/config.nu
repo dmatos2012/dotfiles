@@ -198,3 +198,9 @@ do --env {
 
 }
 
+$env.ENV_CONVERSIONS = {
+    "Path": {
+        from_string: { |s| $s | split row (char esep) | path expand --no-symlink }
+        to_string: { |v| $v | path expand --no-symlink | str join (char esep) }
+    }
+}

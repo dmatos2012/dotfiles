@@ -53,3 +53,8 @@ require("lazy").setup({ import = "custom/plugins" }, {
 
 -- Jump To last position on file. see :help last-position-jump. Seen on reddit/neovim by justinmk
 vim.cmd [[autocmd BufReadPost * if @% !~# '\.git[\/\\]COMMIT_EDITMSG$' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif]]
+
+
+-- Apparently sets autosave, seen on reddit by justinkmk
+-- https://github.com/justinmk/config/blob/c3e8dcd8b8e179fd9d3a16572b2d7c9be55c5104/.config/nvim/init.lua#L80
+vim.cmd [[autocmd BufHidden,FocusLost,WinLeave,CursorHold * if &buftype=='' && filereadable(expand('%:p')) | silent lockmarks update ++p | endif]]
