@@ -25,10 +25,20 @@ cmp.setup {
     ),
   },
 
+
+
   -- Enable luasnip to handle snippet expansion for nvim-cmp
   snippet = {
     expand = function(args)
       vim.snippet.expand(args.body)
     end,
   },
+
+  -- Enable Vim Dadbod completion
+  cmp.setup.filetype({"sql"}, {
+    sources = {
+  { name = "vim-dadbod-completion"},
+  { name = "buffer"},
+  },
+  })
 }

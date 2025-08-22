@@ -130,6 +130,10 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.fzf/bin')
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.rbenv/bin')
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.rbenv/shims')
 
+# Add lua-language-server to path
+$env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/build/lua-language-server/bin/')
+
+
 
 
 # ADD Cuda related ENV variables (Cuda is symlink to cuda 11.3 for me)

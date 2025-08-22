@@ -86,3 +86,19 @@ vim.api.nvim_create_user_command("Q", "q", {})
 -- Change nmap above to the function above `set`
 set("n", "<leader>d", '"_d', {})
 set("n", "<leader>c", '"_c', {})
+
+
+-- Lets try these changes to avoid doing constantly `:w, :wq` and its variants
+
+-- Mapping for saving the current file
+set("n", "<leader>w", "<cmd>w<CR>", { desc = "Write/Save file" })
+
+-- for saving and quitting
+-- Commenting because there is huge delay because of the <leader>w cmd
+-- set("n", "<leader>wq", "<cmd>wq<CR>", { desc = "Save and quit" })
+
+-- for quitting without saving
+set("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit" })
+
+-- to force quit
+set("n", "<leader>Q", "<cmd>q!<CR>", { desc = "Force quit" })
