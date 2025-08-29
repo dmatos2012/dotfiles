@@ -9,8 +9,10 @@ TermCommand.config = {
       "ruff check {file}",
     },
     ocaml = {
-      "dune exec ./{file_no_ext}.exe",
+      "dune exec {project_name} t.olox",
       "dune build",
+      -- "dune test",
+      -- "dune exec ./{project_name}.exe",
     },
   },
 }
@@ -239,6 +241,29 @@ function TermCommand.ui.create_command_palette(commands, execution_fn)
   return win
 end
 
+---Gets the OCaml/Dune project name by reading dune-project or falling back to directory name
+function TermCommand.core.get_project_name()
+  -- First try to read from dune-project file
+  local dune_project = vim.fn.findfile("dune-project", ".;")
+  if dune_project ~= "" then
+    local file = io.open(dune_project, "r")
+    if file then
+      for line in file:lines() do
+        local name = line:match("^%s*%(name%s+([^%)]+)%)")
+        if name then
+          file:close()
+          return name:gsub("%s+", "") -- Remove any whitespace
+        end
+      end
+      file:close()
+    end
+  end
+
+  -- Fallback to current directory name
+  local cwd = vim.fn.getcwd()
+  return vim.fn.fnamemodify(cwd, ":t")
+end
+
 ---Shows a command palette to select or type a command
 function TermCommand.ui.show_command_palette(execution_fn)
   local filetype = vim.bo.filetype
@@ -251,9 +276,24 @@ function TermCommand.ui.show_command_palette(execution_fn)
 
   local file_name = vim.fn.expand("%:t")
   local file_name_no_ext = vim.fn.expand("%:t:r")
+  local project_name = nil
+
+  -- Only get project name for OCaml files
+  if filetype == "ocaml" then
+    project_name = TermCommand.core.get_project_name()
+  end
+
   local final_commands = {}
   for _, template in ipairs(command_templates) do
-    local cmd = template:gsub("{file}", file_name):gsub("{file_no_ext}", file_name_no_ext)
+    local cmd = template
+        :gsub("{file}", file_name)
+        :gsub("{file_no_ext}", file_name_no_ext)
+
+    -- Only substitute project_name for OCaml
+    if project_name then
+      cmd = cmd:gsub("{project_name}", project_name)
+    end
+
     table.insert(final_commands, cmd)
   end
 
@@ -324,7 +364,7 @@ function TermCommand.keymaps.setup()
   end, { desc = "Open [S]plit [V]ertical Terminal" })
 
   -- This is the main command palette that should work from any buffer
-  vim.keymap.set("n", "<space>r", function()
+  vim.keymap.set("n", "<leader>r", function()
     TermCommand.ui.show_command_palette(function(cmd)
       -- First try to send to existing terminal
       local term_job_id = TermCommand.core.find_terminal_job_id()
@@ -353,15 +393,15 @@ function TermCommand.keymaps.setup()
     end)
   end, { desc = "Run [P]roject Command in Terminal" })
 
-  --   vim.keymap.set("n", "<leader>rs", function()
-  --     local current_file = vim.api.nvim_buf_get_name(0)
-  --     if current_file == "" then
-  --       vim.notify("Cannot run: Buffer is not saved to a file.", vim.log.levels.WARN)
-  --       return
-  --     end
-  --     local cmd = "uv run textual run --dev " .. current_file
-  --     TermCommand.core.execute_in_float(cmd)
-  --   end, { desc = "Run [S]erver in float" })
+  vim.keymap.set("n", "<leader>rs", function()
+    local current_file = vim.api.nvim_buf_get_name(0)
+    if current_file == "" then
+      vim.notify("Cannot run: Buffer is not saved to a file.", vim.log.levels.WARN)
+      return
+    end
+    local cmd = "uv run textual run --dev " .. current_file
+    TermCommand.core.execute_in_float(cmd)
+  end, { desc = "Run [S]erver in float" })
 end
 
 -- ============================================================================
