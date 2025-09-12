@@ -14,6 +14,7 @@
   "colorbuddy.nvim": { "branch": "master", "commit": "8b968581e5c19d22a861d5f3fe5dbd83394fa681" },
   "conform.nvim": { "branch": "master", "commit": "eebc724d12c5579d733d1f801386e0ceb909d001" },
   "copilot.lua": { "branch": "master", "commit": "aa00b0bd31e523a0680e3cb9812599bcdd6a83b4" },
+  "dart.nvim": { "branch": "master", "commit": "5335c231d27ea3ab332ba722d99bc899f0b51c4b" },
   "eldritch.nvim": { "branch": "master", "commit": "adedead3423c58cc2e2ebf30001fe4055ad0e416" },
   "express_line.nvim": { "branch": "master", "commit": "30f04edb9647d9ea7c08d0bdbfad33faf5bcda57" },
   "fakedonalds.nvim": { "branch": "master", "commit": "43942b6c29611a3f74431c60e11dc77bafe3bd02" },

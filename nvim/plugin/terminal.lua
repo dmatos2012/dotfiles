@@ -393,15 +393,15 @@ function TermCommand.keymaps.setup()
     end)
   end, { desc = "Run [P]roject Command in Terminal" })
 
-  vim.keymap.set("n", "<leader>rs", function()
-    local current_file = vim.api.nvim_buf_get_name(0)
-    if current_file == "" then
-      vim.notify("Cannot run: Buffer is not saved to a file.", vim.log.levels.WARN)
-      return
-    end
-    local cmd = "uv run textual run --dev " .. current_file
-    TermCommand.core.execute_in_float(cmd)
-  end, { desc = "Run [S]erver in float" })
+  -- vim.keymap.set("n", "<leader>rs", function()
+  --   local current_file = vim.api.nvim_buf_get_name(0)
+  --   if current_file == "" then
+  --     vim.notify("Cannot run: Buffer is not saved to a file.", vim.log.levels.WARN)
+  --     return
+  --   end
+  --   local cmd = "uv run textual run --dev " .. current_file
+  --   TermCommand.core.execute_in_float(cmd)
+  -- end, { desc = "Run [S]erver in float" })
 end
 
 -- ============================================================================
