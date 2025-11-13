@@ -30,6 +30,8 @@ $env.EDITOR = 'nvim'
 $env.VISUAL = 'nvim'
 $env.BROWSER = 'firefox'
 $env.PIP_REQUIRE_VIRTUALENV = 1
+$env.MANPAGER = 'nvim +Man!'
+
 
 $env.config.keybindings = [
 {
@@ -83,7 +85,7 @@ alias gc = git checkout
 alias xo = xdg-open
 # alias gl = git log --oneline
 alias gl = git lg
-alias ssh = kitty +kitten ssh
+# alias ssh = kitty +kitten ssh
 
 
 # Clean dangling docker images
@@ -133,6 +135,9 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.rbenv/shi
 # Add lua-language-server to path
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/build/lua-language-server/bin/')
 
+# Add tfenv to path
+$env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/build/tfenv/bin/')
+
 
 
 
@@ -141,8 +146,13 @@ $env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/cuda/bin')
 $env.LD_LIBRARY_PATH = '/usr/local/cuda/lib64'
 
 # ADD zig to path
-$env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/.local/zig-linux-x86_64-0.14.0/')
+# $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/build/zig/zig-x86_64-linux-0.16.0-dev.1265+bdbfc7de3/')
+# $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/build/zig/zig-x86_64-linux-0.15.1/')
+$env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/build/zig/zig-x86_64-linux-0.15.2/')
 
+
+# Adds blueprint-compiler snap to path (so its found over the original)
+# $env.PATH = ($env.PATH | split row (char esep) | prepend '/snap/bin')
 # Add flutter to path
 
 $env.PATH = ($env.PATH | split row (char esep) | prepend '/home/david/build/flutter-dev/flutter/bin')

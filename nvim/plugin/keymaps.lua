@@ -102,3 +102,6 @@ set("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit" })
 
 -- to force quit
 set("n", "<leader>Q", "<cmd>q!<CR>", { desc = "Force quit" })
+
+-- Add theme switcher
+set("n", "<leader>tc", require("custom.themes").show_colorschemes, { desc = "Choose colorscheme" })

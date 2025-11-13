@@ -1,57 +1,57 @@
--- local actions = require "telescope.actions"
--- local action_state = require "telescope.actions.state"
--- local pickers = require "telescope.pickers"
--- local finders = require "telescope.finders"
--- local conf = require("telescope.config").values
---
--- local function get_entries(theme_entries)
---   local entries = {}
---   for theme_name, theme in pairs(theme_entries) do
---     -- for _, style in pairs(theme.style) do
---     for _, style in pairs { "light", "dark" } do
---       table.insert(entries, {
---         theme_name,
---         style,
---         -- theme.transparent,
---         false,
---       })
---     end
---   end
---
---   return entries
--- end
---
--- local M = {}
--- function M.open_picker(opts)
---   opts = opts or {}
---   pickers
---     .new(opts, {
---       prompt_title = "Themes",
---       finder = finders.new_table {
---         -- results = get_entries({"david", "hello"}themes.themes),
---         results = get_entries { "david", "hello" },
---         entry_maker = function(entry)
---           local name = entry[1] .. " - " .. entry[2]
---           return {
---             value = entry,
---             display = name,
---             ordinal = name,
---           }
---         end,
---       },
---       sorter = conf.generic_sorter(opts),
---       attach_mappings = function(prompt_bufnr, _)
---         actions.select_default:replace(function()
---           actions.close(prompt_bufnr)
---
---           local entry = action_state.get_selected_entry().value
---           vim.cmd.colorscheme "modus_operandi"
---           -- themes.activate_theme(entry[1], entry[2], entry[3])
---         end)
---         return true
---       end,
---     })
---     :find()
--- end
---
--- return M
+local M = {}
+local function get_installed_colorschemes()
+  -- Because we searched for both .vim and .lua files, there might be duplicates, so we need to use a set
+  local colorscheme_set = {}
+  local lazy_path = vim.fn.stdpath("data") .. "/lazy/"
+
+  -- Find all .vim and .lua files inside any 'colors' subdirectory
+  local cmd = "find " .. lazy_path .. " -path '*/colors/*.vim' -o -path '*/colors/*.lua'"
+  local handle = io.popen(cmd)
+  if handle then
+    for line in handle:lines() do
+      -- Get the filename without the path and extension, e.g., "catppuccin-mocha"
+      local name = vim.fn.fnamemodify(line, ":t:r")
+      colorscheme_set[name] = true
+    end
+    handle:close()
+  end
+
+  local colorschemes = {}
+  for cs_name in pairs(colorscheme_set) do
+    table.insert(colorschemes, cs_name)
+  end
+  table.sort(colorschemes)
+  return colorschemes
+end
+
+function M.show_colorschemes()
+  require('fzf-lua').fzf_exec(get_installed_colorschemes(), {
+    prompt = 'Colorschemes> ',
+    -- Using fzf-native preview its like this below
+    -- Just shows the output of whatever cmd I give it
+    -- fzf_opts = {
+    --   ['--preview-window'] = 'nohidden,down,50%',
+    --   ['--preview'] = function(items)
+    --     local contents = {}
+    --     vim.tbl_map(function(x)
+    --       table.insert(contents, "colorscheme " .. x)
+    --     end, items)
+    --     return contents
+    --   end
+    --
+    -- },
+    actions = {
+      ['default'] = function(selected)
+        local cs_name = selected[1]
+        vim.cmd.highlight("clear")
+        vim.cmd.syntax("reset")
+        vim.cmd.colorscheme(cs_name)
+      end,
+    },
+  })
+end
+
+return M
+-- vim.keymap.set("n", "<leader>tc", function()
+--   show_colorschemes()
+-- end, { desc = "Theme chooser (live preview)" })

@@ -1,3 +1,6 @@
+-- Temporarily disable bc yeah, we are not getting copilot again
+-- anything soon
+-- return {}
 return {
   "zbirenbaum/copilot.lua",
   cmd = "Copilot",
@@ -20,6 +23,7 @@ return {
         ocaml = false,
         css = false,
         sql = false,
+        zig = false,
         sh = function()
           if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(0)), '^%.env.*') then
             -- disable for .env files

@@ -6,16 +6,17 @@ return {
     priority = 1000,
     "tjdevries/colorbuddy.nvim",
     config = function()
-      vim.cmd.colorscheme "gruvbuddy"
+      -- vim.cmd.colorscheme "gruvbuddy"
+      vim.cmd.colorscheme "catppuccin-macchiato"
     end,
   },
   "rktjmp/lush.nvim",
   "tckmn/hotdog.vim",
   "dundargoc/fakedonalds.nvim",
   "craftzdog/solarized-osaka.nvim",
-  { "rose-pine/neovim", name = "rose-pine" },
+  { "rose-pine/neovim",          name = "rose-pine" },
   "eldritch-theme/eldritch.nvim",
-  "jesseleite/nvim-noirbuddy",
+  { "jesseleite/nvim-noirbuddy", name = "noirbuddy" },
   "vim-scripts/MountainDew.vim",
   "miikanissi/modus-themes.nvim",
   "rebelot/kanagawa.nvim",
