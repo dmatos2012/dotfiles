@@ -131,9 +131,9 @@ setopt inc_append_history
 setopt share_history
 
 
-# Starship prompt
-eval "$(starship init zsh)"
-
+# # Starship prompt
+# eval "$(starship init zsh)"
+#
 #Zoxide prompt
 eval "$(zoxide init zsh)"
 
