@@ -38,14 +38,33 @@ return {
           },
         },
         rust_analyzer = true,
+        -- nil_ls = true,
+        nil_ls = {
+          settings = {
+            ["nil"] = {
+              formatting = {
+                command = { "alejandra" },
+              },
+            },
+          },
+        },
         pyright = true,
+        nushell = true,
         -- graphql is in after/plugin
         -- graphql = true,
         rescriptls = true,
-        -- TODO: Reenable elixirls once 
+        -- TODO: Reenable elixirls once
         -- i get most packages working with nix
+        -- this is deprecated keep off
+        --  expert is the official supported
         -- elixirls = {
         --   cmd = { "/home/david/build/elixir-ls/language_server.sh" },
+        -- },
+        -- expert = true,
+        -- expert = {
+        --   cmd = { "expert", "--stdio" },
+        --   root_markers = { "mix.exs", ".git" },
+        --   filetypes = { "elixir", "eelixir", "heex", "ex", "exs" },
         -- },
         ocamllsp = {
           -- manual_install = true,
