@@ -28,7 +28,7 @@ return {
         capabilities = require("cmp_nvim_lsp").default_capabilities()
       end
 
-      local lspconfig = require "lspconfig"
+      -- local lspconfig = require "lspconfig"
 
       local servers = {
         bashls = true,
@@ -61,11 +61,11 @@ return {
         --   cmd = { "/home/david/build/elixir-ls/language_server.sh" },
         -- },
         -- expert = true,
-        -- expert = {
-        --   cmd = { "expert", "--stdio" },
-        --   root_markers = { "mix.exs", ".git" },
-        --   filetypes = { "elixir", "eelixir", "heex", "ex", "exs" },
-        -- },
+        expert = {
+          cmd = { "expert", "--stdio" },
+          root_markers = { "mix.exs", ".git" },
+          filetypes = { "elixir", "eelixir", "heex", "ex", "exs" },
+        },
         ocamllsp = {
           -- manual_install = true,
           -- cmd = { "dune", "tools", "exec", "ocamllsp" },
@@ -132,11 +132,15 @@ return {
         if config == true then
           config = {}
         end
-        config = vim.tbl_deep_extend("force", {}, {
-          capabilities = capabilities,
-        }, config)
-
-        lspconfig[name].setup(config)
+        local lsp_config = vim.tbl_deep_extend("force", {}, config)
+        lsp_config.manual_install = nil
+        vim.lsp.config(name, lsp_config)
+        -- config = vim.tbl_deep_extend("force", {}, {
+        --   capabilities = capabilities,
+        -- }, config)
+        --
+        -- lspconfig[name].setup(config)
+        vim.lsp.enable(name)
       end
 
       local disable_semantic_tokens = {
