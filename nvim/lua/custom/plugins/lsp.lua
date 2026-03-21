@@ -80,7 +80,9 @@ return {
         },
         zls = true,
         html = true,
-        ts_ls = true,
+        -- Disable ts_ls, uses too much memory trying biome
+        biome = true,
+        -- ts_ls = true,
         cssls = true,
         jsonls = {
           settings = {
