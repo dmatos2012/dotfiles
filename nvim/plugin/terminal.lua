@@ -343,6 +343,16 @@ end
 
 TermCommand.keymaps = {}
 
+local function with_shell(shell, fn)
+  local prev = vim.o.shell
+  vim.o.shell = shell
+  local ok, err = pcall(fn)
+  vim.o.shell = prev
+  if not ok then
+    error(err)
+  end
+end
+
 function TermCommand.keymaps.setup()
   vim.keymap.set("t", "<esc><esc>", "<c-\\><c-n>", { desc = "Exit Terminal Mode" })
 
@@ -351,7 +361,9 @@ function TermCommand.keymaps.setup()
     vim.cmd.new()
     vim.cmd.wincmd "J"
     vim.api.nvim_win_set_height(0, 12)
-    vim.cmd.term()
+    with_shell("nu", function()
+      vim.cmd.term()
+    end)
     vim.cmd('startinsert')
   end, { desc = "Open [S]plit [T]erminal (Horizontal)" })
 
@@ -359,7 +371,9 @@ function TermCommand.keymaps.setup()
     vim.cmd.new()
     vim.cmd.wincmd "L"
     vim.wo.winfixwidth = true
-    vim.cmd.term()
+    with_shell("nu", function()
+      vim.cmd.term()
+    end)
     vim.cmd('startinsert')
   end, { desc = "Open [S]plit [V]ertical Terminal" })
 

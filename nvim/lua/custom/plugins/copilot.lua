@@ -6,7 +6,7 @@ return {
   cmd = "Copilot",
   event = "InsertEnter",
   config = function()
-    require("copilot").setup({
+    require("copilot").setup {
       suggestion = {
         --  otherwise you have to do it manually,
         -- and it just doesnt work
@@ -16,22 +16,22 @@ return {
           -- bit uncomfortable but will do
           -- accept = "<C-y>"
         },
-
       },
       filetypes = {
+        typescript = false,
         rust = false,
         ocaml = false,
         css = false,
         sql = false,
         zig = false,
         sh = function()
-          if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(0)), '^%.env.*') then
+          if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(0)), "^%.env.*") then
             -- disable for .env files
             return false
           end
           return true
         end,
-      }
-    })
+      },
+    }
   end,
 }

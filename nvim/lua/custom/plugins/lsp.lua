@@ -82,7 +82,7 @@ return {
         html = true,
         -- Disable ts_ls, uses too much memory trying biome
         biome = true,
-        -- ts_ls = true,
+        ts_ls = true,
         cssls = true,
         jsonls = {
           settings = {
@@ -197,6 +197,7 @@ return {
       require("conform").setup {
         formatters_by_ft = {
           lua = { "stylua" },
+          elixir = { "mix format" },
           -- graphql = { "prettier" },
         },
       }

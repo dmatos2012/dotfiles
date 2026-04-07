@@ -98,6 +98,5 @@ return {
         end,
       }
     end,
-  }
-
+  },
 }
