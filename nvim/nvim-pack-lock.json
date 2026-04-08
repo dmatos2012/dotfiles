@@ -1,0 +1,25 @@
+{
+  "plugins": {
+    "blink.cmp": {
+      "rev": "b4b7cbb52bab6c716b317433fa9348a070cccee5",
+      "src": "https://github.com/Saghen/blink.cmp"
+    },
+    "fff.nvim": {
+      "rev": "538c593b7ba173b08beec15e6bce66fccb8f6ab0",
+      "src": "https://github.com/dmtrKovalenko/fff.nvim",
+      "version": "'v0.5.0'"
+    },
+    "gitsigns.nvim": {
+      "rev": "db486b42299b2e3f5831809617af21becf268a39",
+      "src": "https://github.com/lewis6991/gitsigns.nvim"
+    },
+    "nvim-treesitter": {
+      "rev": "4916d6592ede8c07973490d9322f187e07dfefac",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
+    },
+    "nvim-treesitter-textobjects": {
+      "rev": "93d60a475f0b08a8eceb99255863977d3a25f310",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter-textobjects"
+    }
+  }
+}
