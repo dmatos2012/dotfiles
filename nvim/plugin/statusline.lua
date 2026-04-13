@@ -27,6 +27,14 @@ _G.custom_statusline = function()
     end
   end
 
+  local search_str = ""
+  if vim.v.hlsearch ~= 0 then
+    local res = vim.fn.searchcount({ recompute = 1, maxcount = 999, timeout = 100 })
+    if res.total > 0 then
+      search_str = string.format("[%d/%d] ", res.current, res.total)
+    end
+  end
+
   local file_name = "%f"
   local modified = "%m"
   local readonly = "%r"
@@ -50,12 +58,12 @@ _G.custom_statusline = function()
   local percentage = "%p%%"
 
   return string.format(
-    "[%s] %s %s %s%s%s%s %s %s%s%s %s ",
+    "[%s] %s %s %s%s%s%s %s %s%s%s%s %s ",
     mode_str, git_str,
     align,
     truncate, file_name, modified, readonly,
     align,
-    lsp_status, filetype, percentage, location
+    search_str, lsp_status, filetype, percentage, location
   )
 end
 
