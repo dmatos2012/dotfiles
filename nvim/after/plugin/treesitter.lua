@@ -4,7 +4,7 @@
 -- v]n -> next sibling
 -- v[n -> previous sibling
 local languages = { "python", "javascript", "zig", "elixir", "heex", "rust", "lua", "markdown", "nix", "sql",
-  "typescript", "nu", "htmldjango" }
+  "typescript", "nu", "htmldjango", "c" }
 require("nvim-treesitter").install(languages)
 
 vim.api.nvim_create_autocmd("FileType", {

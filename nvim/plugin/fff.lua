@@ -21,7 +21,7 @@ vim.g.fff = {
   },
 }
 
-vim.keymap.set("n", "<leader>ff", function()
+vim.keymap.set("n", "<leader>ft", function()
   require("fff").find_files()
 end, { desc = "FFFind files" })
 

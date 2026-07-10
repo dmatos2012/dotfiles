@@ -3,18 +3,18 @@
 -- This event should be defined *before* the `vim.pack.add` call
 -- so it runs automatically after the plugin is installed.
 vim.api.nvim_create_autocmd("PackChanged", {
-	pattern = "blink.cmp",
-	group = vim.api.nvim_create_augroup("blink_update", { clear = true }),
-	callback = function(e)
-		if e.data.kind == "update" then
-			-- Recommended way to access plugin files inside `PackChanged` event
-			-- vim.cmd [[packadd blink.cmp]]
-			vim.cmd.packadd({ args = { e.data.spec.name }, bang = false })
-			-- Build the plugin from source
-			-- vim.cmd [[BlinkCmp build]]
-			require("blink.cmp.fuzzy.build").build()
-		end
-	end,
+  pattern = "blink.cmp",
+  group = vim.api.nvim_create_augroup("blink_update", { clear = true }),
+  callback = function(e)
+    if e.data.kind == "update" then
+      -- Recommended way to access plugin files inside `PackChanged` event
+      -- vim.cmd [[packadd blink.cmp]]
+      vim.cmd.packadd({ args = { e.data.spec.name }, bang = false })
+      -- Build the plugin from source
+      -- vim.cmd [[BlinkCmp build]]
+      require("blink.cmp.fuzzy.build").build()
+    end
+  end,
 })
 
 -- Install/load the plugin
@@ -31,9 +31,22 @@ vim.pack.add({ { src = "https://github.com/Saghen/blink.cmp" } })
 
 -- Plugin setup
 require("blink.cmp").setup({
-	keymap = {
-		["<C-n>"] = { "show_and_insert", "select_next" },
-		["<C-p>"] = { "show_and_insert", "select_prev" },
-		["<C-j>"] = { "select_and_accept" },
-	},
+  -- enabled = function() return not vim.tbl_contains({ "lua", "markdown" }, vim.bo.filetype) end,
+  sources = {
+    per_filetype = {
+      sql = { "snippets", "dadbod", "buffer" },
+    },
+    providers = {
+      dadbod = { name = "Dadbod", module = "vim_dadbod_completion.blink" },
+    }
+  },
+  keymap = {
+    ["<C-n>"] = { "show_and_insert", "select_next" },
+    ["<C-p>"] = { "show_and_insert", "select_prev" },
+    ["<C-j>"] = { "select_and_accept" },
+  },
+  -- providers = {
+  --   dadbod = { name = "Dadbod", module = "vim_dadbod_completion.blink" },
+  -- }
+
 })
