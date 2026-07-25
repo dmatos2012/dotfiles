@@ -4,6 +4,10 @@
       "rev": "b4b7cbb52bab6c716b317433fa9348a070cccee5",
       "src": "https://github.com/Saghen/blink.cmp"
     },
+    "blink.lib": {
+      "rev": "5876dd95deeb70aadbe9f1c0b7117a135061cdac",
+      "src": "https://github.com/saghen/blink.lib"
+    },
     "fff.nvim": {
       "rev": "538c593b7ba173b08beec15e6bce66fccb8f6ab0",
       "src": "https://github.com/dmtrKovalenko/fff.nvim",
